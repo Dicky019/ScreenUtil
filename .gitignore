@@ -1,0 +1,45 @@
+# macOS
+.DS_Store
+
+# Xcode
+*.xcworkspace
+*.xcuserstate
+*.xcscmblueprint
+*.xccheckout
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+*.xcodeproj/xcuserdata/
+xcuserdata/
+DerivedData/
+*.moved-aside
+*.xcuserdatad
+*.xcassets
+
+# SwiftPM
+/.build
+/.swiftpm
+/Packages
+Package.resolved
+
+# User settings and temp files
+*.swp
+*.swo
+*.orig
+*.bak
+*.tmp
+*.local
+
+# SPM Examples
+Examples/.build
+
+# Other
+*.log
+*.netrc
+*.env
+
+# SwiftLint
+.swiftlint.yml
+
+# SPM
+.swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
