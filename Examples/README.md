@@ -2,6 +2,15 @@
 
 This directory contains comprehensive examples demonstrating how to use ScreenUtil in both UIKit and SwiftUI applications.
 
+## Quick Start
+
+For a lightweight demonstration of identical interfaces in both frameworks, see the one-page examples:
+
+- **SimpleUIKit** – UIKit implementation.
+- **SimpleSwiftUI** – SwiftUI implementation.
+
+Both present the same counter interface to highlight consistent layouts with ScreenUtil.
+
 ## Files
 
 ### UIKitExample.swift
