@@ -38,7 +38,7 @@ public enum ScaleType: Sendable {
     case radius
     case min
     case max
-    case auto // Auto-detect based on context
+    case auto // Currently defaults to width scaling
 }
 
 public enum DeviceType {
