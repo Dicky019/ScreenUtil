@@ -243,6 +243,9 @@ struct DashboardView: View {
 }
 ```
 
+By default, `@ScaledValue` uses `.auto`, which currently defaults to width-based scaling.
+Specify `.width`, `.height`, `.font`, or `.radius` to control scaling explicitly.
+
 #### Responsive Grid
 
 ```swift

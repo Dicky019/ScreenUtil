@@ -144,7 +144,7 @@ public struct ScaledValue {
         case .radius:
             return value.r
         case .auto:
-            // Auto-detect based on usage context
+            // Currently defaults to width scaling
             return value.w
         }
     }
