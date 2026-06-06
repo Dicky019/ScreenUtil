@@ -3,6 +3,7 @@
 //  ScreenUtil
 //
 //  High-performance batch scaling operations
+//  Created by Dicky Darmawan on 06/06/26.
 //
 
 import Foundation

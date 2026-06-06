@@ -3,6 +3,7 @@
 //  ScreenUtil
 //
 //  Convenient numeric extensions for responsive design
+//  Created by Dicky Darmawan on 06/06/26.
 //
 
 import Foundation

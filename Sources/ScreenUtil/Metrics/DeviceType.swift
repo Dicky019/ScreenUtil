@@ -3,6 +3,7 @@
 //  ScreenUtil
 //
 //  Platform/device classification
+//  Created by Dicky Darmawan on 06/06/26.
 //
 
 import Foundation

@@ -3,6 +3,7 @@
 //  ScreenUtil
 //
 //  Cached screen dimensions with TTL and rotation invalidation
+//  Created by Dicky Darmawan on 06/06/26.
 //
 
 import Foundation

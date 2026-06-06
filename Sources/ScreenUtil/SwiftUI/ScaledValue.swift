@@ -3,6 +3,7 @@
 //  ScreenUtil
 //
 //  SwiftUI property wrappers for responsive values
+//  Created by Dicky Darmawan on 06/06/26.
 //
 
 #if canImport(SwiftUI)

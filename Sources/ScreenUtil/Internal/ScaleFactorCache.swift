@@ -3,6 +3,7 @@
 //  ScreenUtil
 //
 //  Captures scale factors once for repeated/batched scaling
+//  Created by Dicky Darmawan on 06/06/26.
 //
 
 import Foundation
@@ -15,10 +16,11 @@ internal struct ScaleFactorCache: Sendable {
     let radiusScale: CGFloat
 
     init(from screenUtil: ScreenUtil) {
-        self.widthScale = screenUtil._scaleWidth
-        self.heightScale = screenUtil._scaleHeight
-        self.textScale = screenUtil._scaleText
-        self.radiusScale = min(screenUtil._scaleWidth, screenUtil._scaleHeight)
+        let f = screenUtil._factors
+        self.widthScale = f.width
+        self.heightScale = f.height
+        self.textScale = f.text
+        self.radiusScale = min(f.width, f.height)
     }
 
     @inline(__always)

@@ -3,6 +3,7 @@
 //  ScreenUtil
 //
 //  Bounds applied to computed scale factors
+//  Created by Dicky Darmawan on 06/06/26.
 //
 
 import Foundation

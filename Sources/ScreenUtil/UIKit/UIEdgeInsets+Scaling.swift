@@ -2,6 +2,9 @@
 //  UIEdgeInsets+Scaling.swift
 //  ScreenUtil
 //
+//  UIEdgeInsets scaling helpers
+//  Created by Dicky Darmawan on 06/06/26.
+//
 
 #if canImport(UIKit)
 import UIKit

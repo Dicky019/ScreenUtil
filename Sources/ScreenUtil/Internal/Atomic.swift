@@ -2,8 +2,8 @@
 //  Atomic.swift
 //  ScreenUtil
 //
-//  High-performance atomic property wrappers using os_unfair_lock
-//  Optimized for frequent reads with minimal lock contention
+//  Atomic property wrapper using os_unfair_lock
+//  Created by Dicky Darmawan on 06/06/26.
 //
 
 import Foundation
@@ -40,44 +40,5 @@ final class Atomic<T> {
         os_unfair_lock_lock(&lock)
         defer { os_unfair_lock_unlock(&lock) }
         try closure(&_value)
-    }
-}
-
-@propertyWrapper
-final class UnsafeAtomicDouble {
-    private var _value: Double
-    private var lock = os_unfair_lock()
-
-    var wrappedValue: Double {
-        @inline(__always)
-        get {
-            #if SCREENUTIL_PERFORMANCE_MODE
-            return _value  // Lock-free read in release mode
-            #else
-            os_unfair_lock_lock(&lock)
-            defer { os_unfair_lock_unlock(&lock) }
-            return _value
-            #endif
-        }
-        set {
-            os_unfair_lock_lock(&lock)
-            defer { os_unfair_lock_unlock(&lock) }
-            _value = newValue
-        }
-    }
-
-    init(wrappedValue: Double) {
-        self._value = wrappedValue
-    }
-
-    @inline(__always)
-    func unsafeRead() -> Double {
-        return _value
-    }
-
-    func safeRead() -> Double {
-        os_unfair_lock_lock(&lock)
-        defer { os_unfair_lock_unlock(&lock) }
-        return _value
     }
 }

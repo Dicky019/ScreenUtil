@@ -3,6 +3,7 @@
 //  ScreenUtil
 //
 //  High-performance scaling operations for hot paths
+//  Created by Dicky Darmawan on 06/06/26.
 //
 
 import Foundation
@@ -63,10 +64,11 @@ public struct FastScale: Sendable {
 public extension ScreenUtil {
     @inline(__always)
     var fastScale: FastScale {
+        let f = _factors
         return FastScale(
-            widthScale: _scaleWidth,
-            heightScale: _scaleHeight,
-            textScale: _scaleText
+            widthScale: f.width,
+            heightScale: f.height,
+            textScale: f.text
         )
     }
 }

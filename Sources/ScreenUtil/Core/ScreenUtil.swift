@@ -2,12 +2,13 @@
 //  ScreenUtil.swift
 //  ScreenUtil
 //
-//  High-performance screen adaptation utility for iOS
-//  Thread-safe singleton with lock-free reads
+//  High-performance, thread-safe screen adaptation engine with lock-free reads
+//  Created by Dicky Darmawan on 06/06/26.
 //
 
 import Foundation
 import CoreGraphics
+import Atomics
 
 public final class ScreenUtil: ScreenScalable, ScreenDimensionProvider, @unchecked Sendable {
     public static let shared = ScreenUtil()
@@ -16,12 +17,18 @@ public final class ScreenUtil: ScreenScalable, ScreenDimensionProvider, @uncheck
     private let dimensionsCache = ScreenDimensionsCache()
     private let safeAreaCache = SafeAreaCacheManager()
 
-    internal private(set) var _scaleWidth: CGFloat = 1.0
-    internal private(set) var _scaleHeight: CGFloat = 1.0
-    internal private(set) var _scaleText: CGFloat = 1.0
+    private let factors = ManagedAtomic<ScaleFactors>(
+        ScaleFactors(width: 1.0, height: 1.0, text: 1.0, screenWidth: 375.0, screenHeight: 812.0)
+    )
 
-    @UnsafeAtomicDouble private var _cachedScreenWidth: Double = 375.0
-    @UnsafeAtomicDouble private var _cachedScreenHeight: Double = 812.0
+    /// Single consistent snapshot of the current scale factors.
+    internal var _factors: ScaleFactors {
+        factors.load(ordering: .acquiring)
+    }
+
+    internal var _scaleWidth: CGFloat { _factors.width }
+    internal var _scaleHeight: CGFloat { _factors.height }
+    internal var _scaleText: CGFloat { _factors.text }
 
     private let configurationLock = os_unfair_lock_t.allocate(capacity: 1)
 
@@ -60,12 +67,14 @@ public final class ScreenUtil: ScreenScalable, ScreenDimensionProvider, @uncheck
 
         let limits = configuration.scalingLimits
 
-        self._scaleWidth = limits.clamp(scaleWidth)
-        self._scaleHeight = limits.clamp(scaleHeight)
-        self._scaleText = limits.clamp(scaleText)
-
-        self._cachedScreenWidth = Double(screenDimensions.width)
-        self._cachedScreenHeight = Double(screenDimensions.height)
+        let snapshot = ScaleFactors(
+            width: limits.clamp(scaleWidth),
+            height: limits.clamp(scaleHeight),
+            text: limits.clamp(scaleText),
+            screenWidth: screenDimensions.width,
+            screenHeight: screenDimensions.height
+        )
+        factors.store(snapshot, ordering: .releasing)
     }
 
     private func preWarmCaches() {
@@ -75,19 +84,20 @@ public final class ScreenUtil: ScreenScalable, ScreenDimensionProvider, @uncheck
 
     @inline(__always)
     private func scaleFactor(for scaleType: ScaleType) -> CGFloat {
+        let f = _factors
         switch scaleType {
         case .width:
-            return _scaleWidth
+            return f.width
         case .height:
-            return _scaleHeight
+            return f.height
         case .text, .font:
-            return _scaleText
+            return f.text
         case .radius, .min:
-            return min(_scaleWidth, _scaleHeight)
+            return min(f.width, f.height)
         case .max:
-            return max(_scaleWidth, _scaleHeight)
+            return max(f.width, f.height)
         case .auto:
-            return _scaleWidth // Default to width scaling
+            return f.width // Default to width scaling
         }
     }
 
@@ -108,11 +118,11 @@ public final class ScreenUtil: ScreenScalable, ScreenDimensionProvider, @uncheck
     }
 
     public var screenWidth: CGFloat {
-        return CGFloat(_cachedScreenWidth)
+        return _factors.screenWidth
     }
 
     public var screenHeight: CGFloat {
-        return CGFloat(_cachedScreenHeight)
+        return _factors.screenHeight
     }
 
     public var safeAreaTop: CGFloat {
