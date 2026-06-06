@@ -15,11 +15,15 @@ let package = Package(
             targets: ["ScreenUtil"]
         )
     ],
-    dependencies: [],
+    dependencies: [
+        .package(url: "https://github.com/apple/swift-atomics.git", from: "1.2.0")
+    ],
     targets: [
         .target(
             name: "ScreenUtil",
-            dependencies: [],
+            dependencies: [
+                .product(name: "Atomics", package: "swift-atomics")
+            ],
             path: "Sources/ScreenUtil",
             exclude: ["Info.plist"],
             resources: [
