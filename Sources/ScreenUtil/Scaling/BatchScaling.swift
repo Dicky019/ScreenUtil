@@ -19,18 +19,10 @@ public extension ScreenUtil {
         return values.map { value in
             let cgValue = cgFloatValue(value)
             switch scaleType {
-            case .width:
-                return cache.scaleWidth(cgValue)
-            case .height:
-                return cache.scaleHeight(cgValue)
-            case .text, .font:
-                return cache.scaleText(cgValue)
-            case .radius, .min:
-                return cache.scaleRadius(cgValue)
-            case .max:
-                return cgValue * max(cache.widthScale, cache.heightScale)
-            case .auto:
-                return cache.scaleWidth(cgValue)
+            case .width:  return cache.scaleWidth(cgValue)
+            case .height: return cache.scaleHeight(cgValue)
+            case .text:   return cache.scaleText(cgValue)
+            case .radius: return cache.scaleRadius(cgValue)
             }
         }
     }

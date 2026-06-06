@@ -13,10 +13,8 @@ jobs:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: latest-stable
-      - name: Swift version
-        run: swift --version
-      - name: Build
-        run: swift build
+      - run: swift --version
+      - run: swift build
 
   test:
     runs-on: macos-14
@@ -25,8 +23,7 @@ jobs:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: latest-stable
-      - name: Test
-        run: swift test
+      - run: swift test
 
   thread-sanitizer:
     runs-on: macos-14
@@ -35,5 +32,26 @@ jobs:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: latest-stable
-      - name: Test (ThreadSanitizer)
-        run: swift test --sanitize=thread
+      - run: swift test --sanitize=thread
+
+  coverage:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - name: Test with coverage
+        run: swift test --enable-code-coverage
+      - name: Enforce >=85% line coverage
+        run: |
+          set -euo pipefail
+          PROF=$(find .build -name '*.profdata' | head -1)
+          XCTEST=$(find .build -name '*.xctest' -type d | head -1)
+          BIN="$XCTEST/Contents/MacOS/$(basename "$XCTEST" .xctest)"
+          PCT=$(xcrun llvm-cov export -summary-only -instr-profile "$PROF" "$BIN" \
+            -ignore-filename-regex='Tests|\.build' \
+            | python3 -c 'import sys,json; print(round(json.load(sys.stdin)["data"][0]["totals"]["lines"]["percent"], 2))')
+          echo "Line coverage: ${PCT}%"
+          python3 -c "import sys; sys.exit(0 if float('${PCT}') >= 85.0 else 1)" \
+            || { echo "::error::Coverage ${PCT}% is below 85%"; exit 1; }

@@ -27,33 +27,30 @@ public struct ScreenDimensions: Sendable {
         self.nativeHeight = height * scale
     }
 
-    #if canImport(UIKit)
+    #if canImport(UIKit) && !os(watchOS)
+    @MainActor
     public static var current: ScreenDimensions {
         let screen = UIScreen.main
         let bounds = screen.bounds
-        return ScreenDimensions(
-            width: bounds.width,
-            height: bounds.height,
-            scale: screen.scale
-        )
+        return ScreenDimensions(width: bounds.width, height: bounds.height, scale: screen.scale)
     }
     #else
-    public static var current: ScreenDimensions {
-        return platformDefaultDimensions
-    }
+    @MainActor
+    public static var current: ScreenDimensions { platformDefault }
     #endif
 
-    private static var platformDefaultDimensions: ScreenDimensions {
+    /// Nonisolated, compile-time default (safe to read off the main actor).
+    public static var platformDefault: ScreenDimensions {
         #if os(iOS)
-        return ScreenDimensions(width: 375, height: 812, scale: 3.0) // iPhone 13 Pro
+        return ScreenDimensions(width: 375, height: 812, scale: 3.0)
         #elseif os(macOS)
-        return ScreenDimensions(width: 1440, height: 900, scale: 2.0) // MacBook Air
+        return ScreenDimensions(width: 1440, height: 900, scale: 2.0)
         #elseif os(tvOS)
-        return ScreenDimensions(width: 1920, height: 1080, scale: 1.0) // Apple TV
+        return ScreenDimensions(width: 1920, height: 1080, scale: 1.0)
         #elseif os(watchOS)
-        return ScreenDimensions(width: 184, height: 224, scale: 2.0) // Apple Watch Series 7 41mm
+        return ScreenDimensions(width: 184, height: 224, scale: 2.0)
         #else
-        return ScreenDimensions(width: 375, height: 812, scale: 2.0) // Default fallback
+        return ScreenDimensions(width: 375, height: 812, scale: 2.0)
         #endif
     }
 

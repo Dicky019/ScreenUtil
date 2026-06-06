@@ -1,4 +1,4 @@
-// swift-tools-version: 5.7
+// swift-tools-version: 6.0
 import PackageDescription
 
 let package = Package(
@@ -30,8 +30,7 @@ let package = Package(
                 .copy("PrivacyInfo.xcprivacy")
             ],
             swiftSettings: [
-                .define("SPM_BUILD"),
-                .unsafeFlags(["-Xfrontend", "-strict-concurrency=complete"]),
+                .define("SPM_BUILD")
             ]
         ),
         .testTarget(
@@ -40,5 +39,5 @@ let package = Package(
             path: "Tests/ScreenUtilTests"
         ),
     ],
-    swiftLanguageVersions: [.v5]
+    swiftLanguageModes: [.v6]
 )

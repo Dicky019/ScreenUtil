@@ -16,11 +16,11 @@ internal struct ScaleFactorCache: Sendable {
     let radiusScale: CGFloat
 
     init(from screenUtil: ScreenUtil) {
-        let f = screenUtil._factors
-        self.widthScale = f.width
-        self.heightScale = f.height
-        self.textScale = f.text
-        self.radiusScale = min(f.width, f.height)
+        let s = screenUtil._snapshot
+        self.widthScale = s.scaleWidth
+        self.heightScale = s.scaleHeight
+        self.textScale = s.scaleText
+        self.radiusScale = min(s.scaleWidth, s.scaleHeight)
     }
 
     @inline(__always)

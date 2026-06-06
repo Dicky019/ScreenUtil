@@ -14,7 +14,6 @@ public protocol ScreenUtilConfigurable {
     var minTextAdapt: Bool { get set }
     var splitScreenMode: Bool { get set }
     var scalingLimits: ScalingLimits { get set }
-    var deviceType: DeviceType { get }
 }
 
 public protocol ScreenScalable {
@@ -34,9 +33,5 @@ public enum ScaleType: Sendable {
     case width
     case height
     case text
-    case font // Alias for text
     case radius
-    case min
-    case max
-    case auto // Auto-detect based on context
 }

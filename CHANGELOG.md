@@ -7,8 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- Initial project setup and structure
+> Pre-1.0; the public API is still changing.
+
+### Changed
+- **Swift 6 language mode** (`swift-tools-version: 6.0`, `swiftLanguageModes: [.v6]`).
+- **Concurrency model**: UIKit metric reads are isolated to `@MainActor`; scale
+  factors are published as an immutable atomic snapshot. All scaling reads stay
+  nonisolated (lock-free, race-free; verified under ThreadSanitizer).
+- `configure(with:)` and `refreshMetrics()` are now `@MainActor`.
+- Restructured `Sources` into a platform-isolated layout
+  (Core / Internal / Metrics / Scaling / UIKit / SwiftUI / Debug).
+- SwiftUI `responsiveCornerRadius` now uses `clipShape` (deprecated `.cornerRadius` removed).
+
+### Fixed
+- Scale-factor data race on concurrent reads during reconfigure.
+- macOS build failure from unguarded `import UIKit`.
+- Batch scaling returning zeros for `CGFloat` / `Int64` inputs.
+- Scale factors now refresh on device rotation (orientation/scene notifications).
+
+### Removed (breaking)
+- `ScaleType` cases `.font`, `.min`, `.max`, `.auto` (now `.width`, `.height`, `.text`, `.radius`).
+- `ScreenUtilConfiguration.deviceType` — use `ScreenUtil.shared.deviceType`.
+- Dead SwiftUI modifiers/wrappers, duplicate types, and the buggy `Array<Numeric>` scaling extension.
+
+### Dependencies
+- Added [apple/swift-atomics](https://github.com/apple/swift-atomics) for the lock-free snapshot.
 
 ## [1.0.0] - 2025-01-XX
 

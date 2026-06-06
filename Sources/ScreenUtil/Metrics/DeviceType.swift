@@ -11,7 +11,7 @@ import Foundation
 import UIKit
 #endif
 
-public enum DeviceType {
+public enum DeviceType: Sendable {
     case iPhone
     case iPad
     case mac
@@ -19,17 +19,10 @@ public enum DeviceType {
     case watch
     case unknown
 
-    public static var current: DeviceType {
+    /// Nonisolated, compile-time platform default (safe to read off the main actor).
+    static var platformDefault: DeviceType {
         #if os(iOS)
-            #if canImport(UIKit)
-            if UIDevice.current.userInterfaceIdiom == .pad {
-                return .iPad
-            } else {
-                return .iPhone
-            }
-            #else
-            return .iPhone // Default fallback for iOS without UIKit
-            #endif
+        return .iPhone
         #elseif os(macOS)
         return .mac
         #elseif os(tvOS)
@@ -40,4 +33,15 @@ public enum DeviceType {
         return .unknown
         #endif
     }
+
+    #if os(iOS) && canImport(UIKit)
+    /// Reads UIDevice (main-actor isolated) to distinguish iPhone vs iPad.
+    @MainActor
+    static var current: DeviceType {
+        UIDevice.current.userInterfaceIdiom == .pad ? .iPad : .iPhone
+    }
+    #else
+    @MainActor
+    static var current: DeviceType { platformDefault }
+    #endif
 }

@@ -157,7 +157,7 @@ public struct ScreenUtilDebug: Sendable {
     }
 
     #if canImport(UIKit) && DEBUG
-    public func showDebugOverlay(on view: UIView) {
+    @MainActor public func showDebugOverlay(on view: UIView) {
         let overlayView = createDebugOverlay()
         view.addSubview(overlayView)
 
@@ -170,7 +170,7 @@ public struct ScreenUtilDebug: Sendable {
         ])
     }
 
-    private func createDebugOverlay() -> UIView {
+    @MainActor private func createDebugOverlay() -> UIView {
         let containerView = UIView()
         containerView.backgroundColor = UIColor.black.withAlphaComponent(0.8)
         containerView.layer.cornerRadius = 8.r

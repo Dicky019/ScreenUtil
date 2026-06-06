@@ -29,7 +29,6 @@ public struct ScaledValue {
         self.type = type
     }
 
-    @MainActor
     public var wrappedValue: CGFloat {
         switch type {
         case .width:

@@ -15,10 +15,6 @@ public struct ScreenUtilConfiguration: ScreenUtilConfigurable, Sendable {
     public var splitScreenMode: Bool
     public var scalingLimits: ScalingLimits
 
-    public var deviceType: DeviceType {
-        return DeviceType.current
-    }
-
     public init(
         designSize: CGSize = CGSize(width: 375, height: 812),
         minTextAdapt: Bool = true,
