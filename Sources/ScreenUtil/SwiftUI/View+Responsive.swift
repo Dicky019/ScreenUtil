@@ -65,9 +65,8 @@ public extension Font {
 // MARK: - Environment
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-@MainActor
-private struct ScreenUtilKey: @preconcurrency EnvironmentKey {
-    static let defaultValue = ScreenUtil.shared
+private struct ScreenUtilKey: EnvironmentKey {
+    static let defaultValue: ScreenUtil = .shared
 }
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
