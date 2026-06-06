@@ -39,7 +39,7 @@ public extension View {
 
     /// Apply a scaled corner radius.
     func responsiveCornerRadius(_ radius: CGFloat) -> some View {
-        self.cornerRadius(radius.r)
+        self.clipShape(RoundedRectangle(cornerRadius: radius.r, style: .continuous))
     }
 }
 

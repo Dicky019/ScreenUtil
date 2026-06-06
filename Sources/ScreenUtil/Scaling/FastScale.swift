@@ -64,12 +64,8 @@ public struct FastScale: Sendable {
 public extension ScreenUtil {
     @inline(__always)
     var fastScale: FastScale {
-        let f = _factors
-        return FastScale(
-            widthScale: f.width,
-            heightScale: f.height,
-            textScale: f.text
-        )
+        let s = _snapshot
+        return FastScale(widthScale: s.scaleWidth, heightScale: s.scaleHeight, textScale: s.scaleText)
     }
 }
 

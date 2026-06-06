@@ -30,32 +30,23 @@ public struct SafeAreaInsets: Sendable {
     public static let zero = SafeAreaInsets(top: 0, bottom: 0, left: 0, right: 0)
 
     #if canImport(UIKit)
+    @MainActor
     public static var current: SafeAreaInsets {
-        guard let windowScene = UIApplication.shared.connectedScenes
-            .compactMap({ $0 as? UIWindowScene })
-            .first,
-              let window = windowScene.windows.first else {
+        guard let scene = UIApplication.shared.connectedScenes
+                .compactMap({ $0 as? UIWindowScene }).first,
+              let window = scene.windows.first else {
             return defaultInsets
         }
-
-        let safeArea = window.safeAreaInsets
-        let statusBarHeight = windowScene.statusBarManager?.statusBarFrame.height ?? 0
-
-        return SafeAreaInsets(
-            top: safeArea.top,
-            bottom: safeArea.bottom,
-            left: safeArea.left,
-            right: safeArea.right,
-            statusBarHeight: statusBarHeight
-        )
+        let safe = window.safeAreaInsets
+        let statusBar = scene.statusBarManager?.statusBarFrame.height ?? 0
+        return SafeAreaInsets(top: safe.top, bottom: safe.bottom, left: safe.left, right: safe.right, statusBarHeight: statusBar)
     }
     #else
-    public static var current: SafeAreaInsets {
-        return defaultInsets
-    }
+    @MainActor
+    public static var current: SafeAreaInsets { defaultInsets }
     #endif
 
-    private static var defaultInsets: SafeAreaInsets {
+    public static var defaultInsets: SafeAreaInsets {
         #if os(iOS)
         return SafeAreaInsets(top: 44, bottom: 34, left: 0, right: 0, statusBarHeight: 44)
         #elseif os(macOS)
