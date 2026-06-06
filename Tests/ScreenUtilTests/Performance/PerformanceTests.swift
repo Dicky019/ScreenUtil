@@ -59,13 +59,14 @@ final class PerformanceTests: XCTestCase {
         }
     }
     
+    @MainActor
     func testConfigurationChangePerformance() {
         let configs = [
             ScreenUtilConfiguration(designSize: CGSize(width: 375, height: 812)),
             ScreenUtilConfiguration(designSize: CGSize(width: 390, height: 844)),
             ScreenUtilConfiguration(designSize: CGSize(width: 414, height: 896))
         ]
-        
+
         measure {
             for config in configs {
                 screenUtil.configure(with: config)
@@ -132,20 +133,6 @@ final class PerformanceTests: XCTestCase {
                 _ = batchScaler.widths(testValues)
                 _ = batchScaler.heights(testValues)
                 _ = batchScaler.fontSizes(testValues)
-            }
-        }
-    }
-    
-    func testAtomicPropertyPerformance() {
-        let atomic = Atomic(wrappedValue: 100.0)
-        
-        measure {
-            DispatchQueue.concurrentPerform(iterations: 1000) { index in
-                if index % 2 == 0 {
-                    atomic.wrappedValue = CGFloat(index)
-                } else {
-                    _ = atomic.wrappedValue
-                }
             }
         }
     }

@@ -12,18 +12,17 @@ import XCTest
 final class ScreenUtilTests: XCTestCase {
     var screenUtil: ScreenUtil!
     
-    @MainActor
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         screenUtil = ScreenUtil.shared
-        
         let testConfig = ScreenUtilConfiguration(
             designSize: CGSize(width: 375, height: 812),
             minTextAdapt: true,
             splitScreenMode: true,
             scalingLimits: ScalingLimits()
         )
-        screenUtil.configure(with: testConfig)
+        let su = screenUtil!
+        await MainActor.run { su.configure(with: testConfig) }
     }
     
     override func tearDown() {
@@ -144,24 +143,40 @@ final class ScreenUtilTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Thread safety test")
         let iterations = 1000
         let concurrentQueue = DispatchQueue(label: "test.concurrent", attributes: .concurrent)
-        var completedTasks = 0
-        
+        let tracker = ResultTracker()
+        let su = screenUtil!
+
+        // No XCTAssert inside the concurrent block: assertion recording mutates
+        // shared XCTestCase state and is not safe to call from many threads
+        // (ThreadSanitizer flags it). Record validity, assert once after.
         for i in 0..<iterations {
             concurrentQueue.async {
                 let testValue = CGFloat(i % 100 + 1)
-                let result = self.screenUtil.w(testValue)
-                XCTAssertTrue(result > 0, "Result should be positive")
-                
-                DispatchQueue.main.async {
-                    completedTasks += 1
-                    if completedTasks == iterations {
-                        expectation.fulfill()
-                    }
+                let result = su.w(testValue)
+                if tracker.record(valid: result > 0) == iterations {
+                    expectation.fulfill()
                 }
             }
         }
-        
+
         wait(for: [expectation], timeout: 10.0)
+        XCTAssertTrue(tracker.allValid, "Every concurrent scale result should be positive")
+    }
+
+    /// Thread-safe counter + validity flag used by `testThreadSafety`.
+    private final class ResultTracker: @unchecked Sendable {
+        private let lock = NSLock()
+        private var count = 0
+        private var valid = true
+        /// Records one result and returns the new count.
+        func record(valid isValid: Bool) -> Int {
+            lock.withLock {
+                if !isValid { valid = false }
+                count += 1
+                return count
+            }
+        }
+        var allValid: Bool { lock.withLock { valid } }
     }
     
     func testBatchOperations() {
@@ -223,11 +238,12 @@ final class ScreenUtilTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(metrics.statusBarHeight, 0, "Status bar height should be non-negative")
     }
     
+    @MainActor
     func testRefreshMetrics() {
         let initialWidthScale = screenUtil.scaleWidth
         screenUtil.refreshMetrics()
         let refreshedWidthScale = screenUtil.scaleWidth
-        
+
         XCTAssertEqual(initialWidthScale, refreshedWidthScale, accuracy: 0.01, "Scale factors should remain consistent after refresh")
     }
 }
