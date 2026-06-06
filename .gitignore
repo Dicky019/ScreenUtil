@@ -41,5 +41,9 @@ Examples/.build
 # SwiftLint
 .swiftlint.yml
 
+# Local-only project notes / planning artifacts (not committed)
+docs/
+.remember/
+
 # SPM
 .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
