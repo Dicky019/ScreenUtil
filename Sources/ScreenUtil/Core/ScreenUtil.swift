@@ -113,9 +113,7 @@ public final class ScreenUtil: ScreenScalable, ScreenDimensionProvider, Sendable
     @inline(__always)
     public func scale(for value: CGFloat, scaleType: ScaleType) -> CGFloat {
         guard value.isFinite else {
-            #if DEBUG
-            print("⚠️ ScreenUtil: Invalid input value \(value) for scale type \(scaleType)")
-            #endif
+            Log(.core, "Invalid input value \(value) for scale type \(scaleType)", level: .warning)
             return 0
         }
         return value * scaleFactor(for: scaleType)
