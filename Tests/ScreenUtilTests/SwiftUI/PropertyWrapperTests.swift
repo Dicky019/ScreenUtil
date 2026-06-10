@@ -18,7 +18,7 @@ final class PropertyWrapperTests: XCTestCase {
                                                    scalingLimits: ScalingLimits(minScale: 0.1, maxScale: 10)))
         let w = ScaledValue(wrappedValue: 10, .width)
         XCTAssertEqual(w.wrappedValue, 10 * su.scaleWidth, accuracy: 0.001)
-        let f = ScaledValue(wrappedValue: 16, .font)
+        let f = ScaledValue(wrappedValue: 16, .text)
         XCTAssertEqual(f.wrappedValue, 16 * su.scaleText, accuracy: 0.001)
     }
 
@@ -31,7 +31,7 @@ final class PropertyWrapperTests: XCTestCase {
     }
 
     @MainActor
-    func testScaledValueHeightRadiusAuto() {
+    func testScaledValueHeightRadius() {
         let su = ScreenUtil.shared
         su.configure(with: ScreenUtilConfiguration(designSize: CGSize(width: 100, height: 100),
                                                    scalingLimits: ScalingLimits(minScale: 0.1, maxScale: 10)))
@@ -40,9 +40,6 @@ final class PropertyWrapperTests: XCTestCase {
 
         let r = ScaledValue(wrappedValue: 8, .radius)
         XCTAssertEqual(r.wrappedValue, su.r(8), accuracy: 0.001)
-
-        let a = ScaledValue(wrappedValue: 12, .auto)
-        XCTAssertEqual(a.wrappedValue, 12 * su.scaleWidth, accuracy: 0.001)
     }
 
     @MainActor

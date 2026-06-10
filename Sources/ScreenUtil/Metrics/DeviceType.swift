@@ -11,7 +11,7 @@ import Foundation
 import UIKit
 #endif
 
-public enum DeviceType: Sendable {
+public enum DeviceType: Sendable, Equatable, Hashable {
     case iPhone
     case iPad
     case mac

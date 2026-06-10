@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Restructured `Sources` into a platform-isolated layout
   (Core / Internal / Metrics / Scaling / UIKit / SwiftUI / Debug).
 - SwiftUI `responsiveCornerRadius` now uses `clipShape` (deprecated `.cornerRadius` removed).
+- Replaced all `print` logging with unified logging (`os.Logger`, subsystem `com.screenutil`).
+- Raised deployment baseline to iOS 15 / macOS 12 / tvOS 15 / watchOS 8.
+- `ScreenDimensions.current` now derives from the active `UIWindowScene` instead of the soft-deprecated `UIScreen.main`.
+- Public value types (`ScalingLimits`, `ScreenMetrics`, `ScreenDimensions`, `SafeAreaInsets`, `ScreenUtilConfiguration`, `ScaleType`, `DeviceType`) now conform to `Equatable`/`Hashable`.
 
 ### Fixed
 - Scale-factor data race on concurrent reads during reconfigure.
@@ -29,6 +33,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `ScaleType` cases `.font`, `.min`, `.max`, `.auto` (now `.width`, `.height`, `.text`, `.radius`).
 - `ScreenUtilConfiguration.deviceType` — use `ScreenUtil.shared.deviceType`.
 - Dead SwiftUI modifiers/wrappers, duplicate types, and the buggy `Array<Numeric>` scaling extension.
+- `ScreenUtilConfiguration.splitScreenMode` — unused, removed from the config and `ScreenUtilConfigurable`.
+- `ScaledValue.ScaleType` nested enum — `@ScaledValue` now uses the top-level `ScaleType` (`.font` → `.text`, `.auto` removed; default is `.width`).
+- Benchmark APIs (`measurePerformance`, `benchmarkScalingOperations`) are now `#if DEBUG`-only.
 
 ### Dependencies
 - Added [apple/swift-atomics](https://github.com/apple/swift-atomics) for the lock-free snapshot.

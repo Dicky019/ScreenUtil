@@ -12,7 +12,7 @@ import CoreGraphics
 import UIKit
 #endif
 
-public struct ScreenDimensions: Sendable {
+public struct ScreenDimensions: Sendable, Equatable, Hashable {
     public let width: CGFloat
     public let height: CGFloat
     public let scale: CGFloat
@@ -30,7 +30,11 @@ public struct ScreenDimensions: Sendable {
     #if canImport(UIKit) && !os(watchOS)
     @MainActor
     public static var current: ScreenDimensions {
-        let screen = UIScreen.main
+        guard let scene = UIApplication.shared.connectedScenes
+                .compactMap({ $0 as? UIWindowScene }).first else {
+            return platformDefault
+        }
+        let screen = scene.screen
         let bounds = screen.bounds
         return ScreenDimensions(width: bounds.width, height: bounds.height, scale: screen.scale)
     }

@@ -259,12 +259,12 @@ var batchScaler: BatchScaler
 
 ```swift
 ScreenUtil.shared.debug.printCurrentConfiguration()
-ScreenUtil.shared.debug.benchmarkScalingOperations()
 _ = ScreenUtil.shared.debug.validateScaling()
 let report = ScreenUtil.shared.debug.generateTestReport()
 
 #if DEBUG
-ScreenUtil.shared.debug.showDebugOverlay(on: view)   // UIKit
+ScreenUtil.shared.debug.benchmarkScalingOperations()  // DEBUG builds only
+ScreenUtil.shared.debug.showDebugOverlay(on: view)    // UIKit
 #endif
 ```
 
@@ -278,7 +278,7 @@ swift test --sanitize=thread   # data-race check
 
 ## 📱 Device Support
 
-iPhone, iPad (incl. Split View), plus macOS / tvOS / watchOS builds. iOS 13.0+ / macOS 10.15+ / tvOS 13.0+ / watchOS 6.0+.
+iPhone, iPad (incl. Split View), plus macOS / tvOS / watchOS builds. iOS 15.0+ / macOS 12.0+ / tvOS 15.0+ / watchOS 8.0+.
 
 ## 🤝 Contributing
 
