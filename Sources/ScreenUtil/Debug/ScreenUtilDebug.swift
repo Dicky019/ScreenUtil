@@ -12,34 +12,34 @@ import CoreGraphics
 import UIKit
 #endif
 
+/// Debug and development utilities for inspecting ScreenUtil's active configuration and scaling behaviour.
 public struct ScreenUtilDebug: Sendable {
+    /// Shared singleton instance.
     public static let shared = ScreenUtilDebug()
 
     private init() {}
 
+    /// Logs the current screen metrics and scale factors via `os.Logger`.
     public func printCurrentConfiguration() {
         let screenUtil = ScreenUtil.shared
         let metrics = screenUtil.getScreenMetrics()
 
-        print("""
-        ╔══════════════════════════════════════════════════════════╗
-        ║                    ScreenUtil Debug Info                 ║
-        ╠══════════════════════════════════════════════════════════╣
-        ║ Screen Dimensions: \(metrics.width) x \(metrics.height) pts          ║
-        ║ Scale Factor: \(metrics.scale)x                              ║
-        ║ Safe Area: T:\(metrics.safeAreaInsets.0) B:\(metrics.safeAreaInsets.1) L:\(metrics.safeAreaInsets.2) R:\(metrics.safeAreaInsets.3)     ║
-        ║ Status Bar Height: \(metrics.statusBarHeight) pts                 ║
-        ║                                                          ║
-        ║ Scale Factors:                                           ║
-        ║   Width Scale: \(screenUtil.scaleWidth)                        ║
-        ║   Height Scale: \(screenUtil.scaleHeight)                       ║
-        ║   Text Scale: \(screenUtil.scaleText)                         ║
-        ║                                                          ║
-        ║ Device Type: \(screenUtil.deviceType)                           ║
-        ╚══════════════════════════════════════════════════════════╝
-        """)
+        let message = """
+        ScreenUtil Debug Info
+        Screen Dimensions: \(metrics.width) x \(metrics.height) pts
+        Scale Factor: \(metrics.scale)x
+        Safe Area: T:\(metrics.safeAreaInsets.0) B:\(metrics.safeAreaInsets.1) L:\(metrics.safeAreaInsets.2) R:\(metrics.safeAreaInsets.3)
+        Status Bar Height: \(metrics.statusBarHeight) pts
+        Width Scale: \(screenUtil.scaleWidth)
+        Height Scale: \(screenUtil.scaleHeight)
+        Text Scale: \(screenUtil.scaleText)
+        Device Type: \(screenUtil.deviceType)
+        """
+        Log(.debug, message)
     }
 
+    #if DEBUG
+    /// Runs `operation` `iterations` times and returns the last result alongside the average execution time.
     public func measurePerformance<T>(_ operation: () -> T, iterations: Int = 10000) -> (result: T, averageTime: TimeInterval) {
         var totalTime: TimeInterval = 0
         var result: T!
@@ -55,12 +55,12 @@ public struct ScreenUtilDebug: Sendable {
         return (result, averageTime)
     }
 
+    /// Benchmarks standard, fast, and batch scaling paths and logs the results.
     public func benchmarkScalingOperations() {
         let testValue: CGFloat = 100.0
         let iterations = 100000
 
-        print("\n🚀 ScreenUtil Performance Benchmark")
-        print("Testing \(iterations) iterations...\n")
+        Log(.benchmark, "ScreenUtil Performance Benchmark — \(iterations) iterations")
 
         let standardW = measurePerformance({
             testValue.w
@@ -74,15 +74,16 @@ public struct ScreenUtilDebug: Sendable {
             ScreenUtil.shared.batchWidths([10, 20, 30, 40, 50])
         }, iterations: iterations / 10)
 
-        print("📊 Results:")
-        print("  Standard .w: \(String(format: "%.2f", standardW.averageTime * 1_000_000)) μs")
-        print("  Fast .fastW: \(String(format: "%.2f", fastW.averageTime * 1_000_000)) μs")
-        print("  Batch operation: \(String(format: "%.2f", batchOperation.averageTime * 1_000_000)) μs")
+        Log(.benchmark, "Standard .w: \(String(format: "%.2f", standardW.averageTime * 1_000_000)) μs")
+        Log(.benchmark, "Fast .fastW: \(String(format: "%.2f", fastW.averageTime * 1_000_000)) μs")
+        Log(.benchmark, "Batch operation: \(String(format: "%.2f", batchOperation.averageTime * 1_000_000)) μs")
 
         let speedup = standardW.averageTime / fastW.averageTime
-        print("\n⚡ Fast path is \(String(format: "%.1f", speedup))x faster")
+        Log(.benchmark, "Fast path is \(String(format: "%.1f", speedup))x faster")
     }
+    #endif
 
+    /// Validates that all scaling operations produce positive results for a set of test inputs; returns `true` when all pass.
     public func validateScaling() -> Bool {
         let screenUtil = ScreenUtil.shared
         var allValid = true
@@ -94,7 +95,7 @@ public struct ScreenUtilDebug: Sendable {
             (12, "Radius scaling")
         ]
 
-        print("\n✅ Validation Tests:")
+        Log(.debug, "Validation Tests:")
 
         for testCase in testCases {
             let widthResult = screenUtil.w(testCase.input)
@@ -105,15 +106,16 @@ public struct ScreenUtilDebug: Sendable {
             let isValid = widthResult > 0 && heightResult > 0 && textResult > 0 && radiusResult > 0
             if !isValid {
                 allValid = false
-                print("  ❌ \(testCase.expected) failed for input \(testCase.input)")
+                Log(.debug, "\(testCase.expected) failed for input \(testCase.input)", level: .error)
             } else {
-                print("  ✅ \(testCase.expected) passed")
+                Log(.debug, "\(testCase.expected) passed")
             }
         }
 
         return allValid
     }
 
+    /// Generates a markdown-formatted test report containing device info, scale factors, and sample scaled values.
     public func generateTestReport() -> String {
         let screenUtil = ScreenUtil.shared
         let metrics = screenUtil.getScreenMetrics()
@@ -157,6 +159,7 @@ public struct ScreenUtilDebug: Sendable {
     }
 
     #if canImport(UIKit) && DEBUG
+    /// Adds a semi-transparent overlay showing current screen metrics and scale factors to `view`.
     @MainActor public func showDebugOverlay(on view: UIView) {
         let overlayView = createDebugOverlay()
         view.addSubview(overlayView)
@@ -213,16 +216,19 @@ public struct ScreenUtilDebug: Sendable {
 }
 
 public extension ScreenUtil {
+    /// Convenience accessor for `ScreenUtilDebug.shared`.
     var debug: ScreenUtilDebug {
         return ScreenUtilDebug.shared
     }
 }
 
 #if DEBUG
+/// Prints the current ScreenUtil configuration to the log; available in DEBUG builds only.
 public func printScreenUtilInfo() {
     ScreenUtilDebug.shared.printCurrentConfiguration()
 }
 
+/// Runs the ScreenUtil scaling benchmark and logs results; available in DEBUG builds only.
 public func benchmarkScreenUtil() {
     ScreenUtilDebug.shared.benchmarkScalingOperations()
 }

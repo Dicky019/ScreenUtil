@@ -11,7 +11,6 @@ import SwiftUI
 
 // MARK: - View Modifiers
 
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public extension View {
     /// Apply a responsive frame (design values scaled to the device).
     func responsiveFrame(
@@ -45,7 +44,6 @@ public extension View {
 
 // MARK: - Font
 
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public extension Font {
     /// Create a system font with scaled size.
     static func scaledSystem(
@@ -64,12 +62,10 @@ public extension Font {
 
 // MARK: - Environment
 
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 private struct ScreenUtilKey: EnvironmentKey {
     static let defaultValue: ScreenUtil = .shared
 }
 
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public extension EnvironmentValues {
     /// Access ScreenUtil instance from environment.
     var screenUtil: ScreenUtil {
@@ -80,7 +76,6 @@ public extension EnvironmentValues {
 
 // MARK: - Helpers
 
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 private extension Edge.Set {
     var isHorizontal: Bool {
         return self == .horizontal || self == .leading || self == .trailing

@@ -12,13 +12,20 @@ import CoreGraphics
 import UIKit
 #endif
 
-public struct SafeAreaInsets: Sendable {
+/// A value-type snapshot of the device safe-area insets and status bar height.
+public struct SafeAreaInsets: Sendable, Equatable, Hashable {
+    /// Safe-area inset at the top of the screen in points.
     public let top: CGFloat
+    /// Safe-area inset at the bottom of the screen in points.
     public let bottom: CGFloat
+    /// Safe-area inset on the left side of the screen in points.
     public let left: CGFloat
+    /// Safe-area inset on the right side of the screen in points.
     public let right: CGFloat
+    /// Height of the status bar in points (0 when not applicable).
     public let statusBarHeight: CGFloat
 
+    /// Creates a `SafeAreaInsets` with explicit inset values and an optional status bar height.
     public init(top: CGFloat, bottom: CGFloat, left: CGFloat, right: CGFloat, statusBarHeight: CGFloat = 0) {
         self.top = top
         self.bottom = bottom
@@ -27,6 +34,7 @@ public struct SafeAreaInsets: Sendable {
         self.statusBarHeight = statusBarHeight
     }
 
+    /// All-zero insets, useful as a safe default when no window is available.
     public static let zero = SafeAreaInsets(top: 0, bottom: 0, left: 0, right: 0)
 
     #if canImport(UIKit)

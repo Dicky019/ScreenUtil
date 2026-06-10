@@ -18,7 +18,6 @@ final class ScreenUtilTests: XCTestCase {
         let testConfig = ScreenUtilConfiguration(
             designSize: CGSize(width: 375, height: 812),
             minTextAdapt: true,
-            splitScreenMode: true,
             scalingLimits: ScalingLimits()
         )
         let su = screenUtil!
@@ -42,7 +41,6 @@ final class ScreenUtilTests: XCTestCase {
         let config = ScreenUtilConfiguration(
             designSize: CGSize(width: 390, height: 844),
             minTextAdapt: false,
-            splitScreenMode: false,
             scalingLimits: ScalingLimits(minScale: 0.8, maxScale: 1.5)
         )
         
