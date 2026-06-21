@@ -10,7 +10,7 @@ Organizing rule: **one platform = one place.** Everything outside `UIKit/` and `
 
 | Path | Role |
 |------|------|
-| `Core/ScreenUtil.swift` | Singleton engine (`ScreenUtil.shared`), `configure`, `scale`/`fastScale`, `.w/.h/.sp/.r/.sw/.sh/.fast*` |
+| `Core/ScreenUtil.swift` | Singleton engine (`ScreenUtil.shared`), `configure`, `scale`/`fastScale`, `.w/.h/.sp/.r/.sw/.sh` |
 | `Core/ScreenUtilConfiguration.swift` | Config struct + device presets (`iPhone13Pro`, `iPadPro11`, …) |
 | `Core/ScaleType.swift` | Protocols (`ScreenScalable`, `ScreenUtilConfigurable`, `ScreenDimensionProvider`) + `ScaleType` |
 | `Core/ScalingLimits.swift` | `ScalingLimits` (`.default`/`.strict`/`.relaxed`) |
@@ -22,7 +22,7 @@ Organizing rule: **one platform = one place.** Everything outside `UIKit/` and `
 | `Metrics/ScreenDimensions.swift` | Platform dimensions snapshot (UIKit-gated reader) |
 | `Metrics/SafeAreaInsets.swift` | Platform safe-area snapshot (UIKit-gated reader) |
 | `Metrics/DeviceType.swift` | Device/platform classification |
-| `Scaling/Numeric+Scaling.swift` | `Int/Float/Double/CGFloat` `.w/.h/.sp/.r/.sw/.sh/.fast*` |
+| `Scaling/Numeric+Scaling.swift` | `Int/Float/Double/CGFloat` `.w/.h/.sp/.r/.sw/.sh` |
 | `Scaling/CGGeometry+Scaling.swift` | `CGSize/CGPoint/CGRect` scaling (cross-platform) |
 | `Scaling/FastScale.swift` | `FastScale` capture-once struct for hot loops + `withFastScale` |
 | `Scaling/BatchScaling.swift` | `batch*` methods + `BatchScaler` for bulk scaling |
@@ -38,7 +38,7 @@ Organizing rule: **one platform = one place.** Everything outside `UIKit/` and `
 Anything not reachable from this set is a removal/merge candidate.
 
 - `ScreenUtil.shared` + `configure(with:)` — singleton, configured once at launch.
-- Numeric scaling: `.w .h .sp .r .sw .sh` and fast variants `.fastW .fastH .fastSp`.
+- Numeric scaling: `.w .h .sp .r .sw .sh`.
 - `ScreenUtilConfiguration` (+ presets) and `ScalingLimits`.
 - `FastScale` / `withFastScale`, `BatchScaler` / `withBatchScaler` / `batch*`.
 - SwiftUI: `responsiveFrame/responsivePadding/responsiveCornerRadius`, `Font.scaledSystem`, `@ScaledValue`, `@ScreenPercentage`.
@@ -49,17 +49,10 @@ Anything not reachable from this set is a removal/merge candidate.
 - Keep **zero dependencies** — `Package.swift` `dependencies: []` stays empty.
 - **One platform = one place**: UIKit code only under `UIKit/` (or `#if canImport(UIKit)` blocks); SwiftUI only under `SwiftUI/`. Never bare `import UIKit` in cross-platform files — breaks macOS.
 - Builds under `-strict-concurrency=complete` — no new concurrency warnings.
-- `ScreenUtil` is `@unchecked Sendable`. New shared state must be `Sendable` / atomic.
+- `ScreenUtil` is compiler-verified `Sendable` (atomic `Snapshot`; no `@unchecked`). New shared state must be `Sendable` / atomic.
 - Bulk APIs accept `[T: Numeric]` — route through `cgFloatValue(_:)` so `CGFloat`/`Int64`/etc don't silently scale to zero.
 - Removing code: confirm it's not reachable from the Public Contract and not referenced in `Tests/` or `Examples/`.
 - Verify with `swift build` **and** `swift test` on macOS (catches the platform-isolation regressions).
-
-## Known Issues (not yet addressed)
-
-- **Data race**: `_scaleWidth/_scaleHeight/_scaleText` are plain `var` read without synchronization (only `@unchecked Sendable` hides it). TSan would flag. A proper fix needs atomic reads.
-- **Stale on rotation**: caches invalidate on orientation change, but scale factors only recompute on `configure()`/`refreshMetrics()`. No observer re-derives `_scale*` after rotation.
-- **`fastW` ≈ `.w`**: measured ~1.1× faster, not the README's "6×". For real hot loops use `FastScale` (capture-once).
-- **README drift**: README documents APIs that don't exist (`.ssp`, `adaptiveFont`, `isIPad`, `pixelRatio`, `orientation`, `bottomSafeArea`, `prewarmCaches`, `ResponsiveGrid`, `fontResolver`, `debugMode`). Reconcile before publishing.
 
 ## Build & Test
 

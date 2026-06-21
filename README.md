@@ -19,7 +19,7 @@
 - 🔒 **Thread-Safe** — lock-free reads via an atomic scale-factor snapshot (no torn reads)
 - 📱 **Design-Based Scaling** — scale UI relative to your design dimensions
 - 🎯 **Simple API** — intuitive extensions: `.w`, `.h`, `.sp`, `.r`
-- ⚡ **Fast Path** — capture-once `FastScale` for hot loops; `.fastW/.fastH/.fastSp` for quick reads
+- ⚡ **Fast Path** — capture-once `FastScale` for hot loops
 - 📦 **Batch Scaling** — `BatchScaler` / `batch*` for bulk work
 - 🔧 **UIKit & SwiftUI** — first-class support for both
 - 📊 **Percentage Sizing** — `.sw` / `.sh` for screen-relative layouts
@@ -109,8 +109,6 @@ withFastScale { fast in
 let fast = ScreenUtil.shared.fastScale
 view.frame = fast.rect(designRect)
 ```
-
-Per-value `.fastW` / `.fastH` / `.fastSp` skip the input validation but are only marginally faster than `.w`; prefer `FastScale` when you actually have a hot loop.
 
 ### Batch scaling
 
@@ -229,7 +227,6 @@ struct CardView: View {
 | `.r` | Radius scaling | `12.r` |
 | `.sw` | Screen width percentage | `50.sw` |
 | `.sh` | Screen height percentage | `10.sh` |
-| `.fastW` `.fastH` `.fastSp` | Fast (unvalidated) variants | `100.fastW` |
 
 ### `ScreenUtil.shared`
 
