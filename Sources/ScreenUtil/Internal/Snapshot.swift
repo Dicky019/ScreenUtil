@@ -9,14 +9,20 @@
 import CoreGraphics
 import Atomics
 
+@usableFromInline
 final class Snapshot: AtomicReference, Sendable {
-    let scaleWidth: CGFloat
-    let scaleHeight: CGFloat
-    let scaleText: CGFloat
+    @usableFromInline let scaleWidth: CGFloat
+    @usableFromInline let scaleHeight: CGFloat
+    @usableFromInline let scaleText: CGFloat
     let screenWidth: CGFloat
     let screenHeight: CGFloat
     let screenScale: CGFloat
-    let safeArea: SafeAreaInsets
+    // Native safe-area values, captured from the window at rebuild time (0 when unavailable).
+    let safeAreaTop: CGFloat
+    let safeAreaBottom: CGFloat
+    let safeAreaLeft: CGFloat
+    let safeAreaRight: CGFloat
+    let statusBarHeight: CGFloat
     let deviceType: DeviceType
 
     init(
@@ -26,7 +32,11 @@ final class Snapshot: AtomicReference, Sendable {
         screenWidth: CGFloat,
         screenHeight: CGFloat,
         screenScale: CGFloat,
-        safeArea: SafeAreaInsets,
+        safeAreaTop: CGFloat,
+        safeAreaBottom: CGFloat,
+        safeAreaLeft: CGFloat,
+        safeAreaRight: CGFloat,
+        statusBarHeight: CGFloat,
         deviceType: DeviceType
     ) {
         self.scaleWidth = scaleWidth
@@ -35,13 +45,21 @@ final class Snapshot: AtomicReference, Sendable {
         self.screenWidth = screenWidth
         self.screenHeight = screenHeight
         self.screenScale = screenScale
-        self.safeArea = safeArea
+        self.safeAreaTop = safeAreaTop
+        self.safeAreaBottom = safeAreaBottom
+        self.safeAreaLeft = safeAreaLeft
+        self.safeAreaRight = safeAreaRight
+        self.statusBarHeight = statusBarHeight
         self.deviceType = deviceType
     }
 
-    static let `default` = Snapshot(
-        scaleWidth: 1, scaleHeight: 1, scaleText: 1,
-        screenWidth: 375, screenHeight: 812, screenScale: 2,
-        safeArea: .zero, deviceType: .platformDefault
-    )
+    static let `default`: Snapshot = {
+        let dims = ScreenDimensions.platformDefault
+        return Snapshot(
+            scaleWidth: 1, scaleHeight: 1, scaleText: 1,
+            screenWidth: dims.width, screenHeight: dims.height, screenScale: dims.scale,
+            safeAreaTop: 0, safeAreaBottom: 0, safeAreaLeft: 0, safeAreaRight: 0, statusBarHeight: 0,
+            deviceType: .platformDefault
+        )
+    }()
 }

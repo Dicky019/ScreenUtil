@@ -36,6 +36,7 @@ public enum ScreenUtilDebug {
     #if DEBUG
     /// Runs `operation` `iterations` times and returns the last result alongside the average execution time.
     public static func measurePerformance<T>(_ operation: () -> T, iterations: Int = 10000) -> (result: T, averageTime: TimeInterval) {
+        precondition(iterations > 0, "iterations must be > 0")
         var totalTime: TimeInterval = 0
         var result: T!
 

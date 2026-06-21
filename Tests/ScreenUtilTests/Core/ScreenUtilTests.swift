@@ -28,7 +28,18 @@ final class ScreenUtilTests: XCTestCase {
         screenUtil = nil
         super.tearDown()
     }
-    
+
+    // MARK: - Default snapshot consistency
+
+    func testDefaultSnapshotMatchesPlatformDefaults() {
+        let dims = ScreenDimensions.platformDefault
+        XCTAssertEqual(Snapshot.default.screenWidth,  dims.width)
+        XCTAssertEqual(Snapshot.default.screenHeight, dims.height)
+        XCTAssertEqual(Snapshot.default.screenScale,  dims.scale)
+        XCTAssertEqual(Snapshot.default.scaleWidth, 1)        // identity unchanged
+        XCTAssertEqual(Snapshot.default.safeAreaTop, 0)       // native safe area: 0 pre-configure / no window
+    }
+
     @MainActor
     func testSingletonInstance() {
         let instance1 = ScreenUtil.shared
@@ -184,19 +195,13 @@ final class ScreenUtilTests: XCTestCase {
     }
     
     func testSafeAreaAccess() {
-        let safeAreaTop = screenUtil.safeAreaTop
-        let safeAreaBottom = screenUtil.safeAreaBottom
-        let safeAreaLeft = screenUtil.safeAreaLeft
-        let safeAreaRight = screenUtil.safeAreaRight
-        let statusBarHeight = screenUtil.statusBarHeight
-        
-        XCTAssertGreaterThanOrEqual(safeAreaTop, 0)
-        XCTAssertGreaterThanOrEqual(safeAreaBottom, 0)
-        XCTAssertGreaterThanOrEqual(safeAreaLeft, 0)
-        XCTAssertGreaterThanOrEqual(safeAreaRight, 0)
-        XCTAssertGreaterThanOrEqual(statusBarHeight, 0)
+        XCTAssertGreaterThanOrEqual(screenUtil.safeAreaTop, 0)
+        XCTAssertGreaterThanOrEqual(screenUtil.safeAreaBottom, 0)
+        XCTAssertGreaterThanOrEqual(screenUtil.safeAreaLeft, 0)
+        XCTAssertGreaterThanOrEqual(screenUtil.safeAreaRight, 0)
+        XCTAssertGreaterThanOrEqual(screenUtil.statusBarHeight, 0)
     }
-    
+
     func testDeviceTypeDetection() {
         let deviceType = screenUtil.deviceType
         XCTAssertNotEqual(deviceType, .unknown, "Device type should be detected")

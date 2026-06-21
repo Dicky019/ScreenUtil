@@ -91,7 +91,7 @@ final class PerformanceTests: XCTestCase {
             }
         }
     }
-    
+
     func testScreenDimensionsCachePerformance() {
         measure {
             for _ in 0..<1000 {

@@ -12,14 +12,14 @@ import CoreGraphics
 import UIKit
 #endif
 
-public struct ScreenDimensions: Sendable, Equatable, Hashable {
-    public let width: CGFloat
-    public let height: CGFloat
-    public let scale: CGFloat
-    public let nativeWidth: CGFloat
-    public let nativeHeight: CGFloat
+struct ScreenDimensions: Sendable, Equatable, Hashable {
+    let width: CGFloat
+    let height: CGFloat
+    let scale: CGFloat
+    let nativeWidth: CGFloat
+    let nativeHeight: CGFloat
 
-    public init(width: CGFloat, height: CGFloat, scale: CGFloat) {
+    init(width: CGFloat, height: CGFloat, scale: CGFloat) {
         self.width = width
         self.height = height
         self.scale = scale
@@ -29,7 +29,7 @@ public struct ScreenDimensions: Sendable, Equatable, Hashable {
 
     #if canImport(UIKit) && !os(watchOS)
     @MainActor
-    public static var current: ScreenDimensions {
+    static var current: ScreenDimensions {
         guard let scene = UIApplication.shared.connectedScenes
                 .compactMap({ $0 as? UIWindowScene }).first else {
             return platformDefault
@@ -40,11 +40,11 @@ public struct ScreenDimensions: Sendable, Equatable, Hashable {
     }
     #else
     @MainActor
-    public static var current: ScreenDimensions { platformDefault }
+    static var current: ScreenDimensions { platformDefault }
     #endif
 
     /// Nonisolated, compile-time default (safe to read off the main actor).
-    public static var platformDefault: ScreenDimensions {
+    static var platformDefault: ScreenDimensions {
         #if os(iOS)
         return ScreenDimensions(width: 375, height: 812, scale: 3.0)
         #elseif os(macOS)
@@ -58,23 +58,23 @@ public struct ScreenDimensions: Sendable, Equatable, Hashable {
         #endif
     }
 
-    public var aspectRatio: CGFloat {
+    var aspectRatio: CGFloat {
         return width / height
     }
 
-    public var isLandscape: Bool {
+    var isLandscape: Bool {
         return width > height
     }
 
-    public var isPortrait: Bool {
+    var isPortrait: Bool {
         return height > width
     }
 
-    public var minDimension: CGFloat {
+    var minDimension: CGFloat {
         return min(width, height)
     }
 
-    public var maxDimension: CGFloat {
+    var maxDimension: CGFloat {
         return max(width, height)
     }
 }

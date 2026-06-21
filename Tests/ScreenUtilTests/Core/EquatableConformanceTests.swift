@@ -43,8 +43,7 @@ final class EquatableConformanceTests: XCTestCase {
         XCTAssertNotEqual(a, c)
     }
 
-    func testSafeAreaInsetsAndDimensionsEquatable() {
-        XCTAssertEqual(SafeAreaInsets.zero, SafeAreaInsets(top: 0, bottom: 0, left: 0, right: 0))
+    func testDimensionsEquatable() {
         XCTAssertEqual(ScreenDimensions(width: 10, height: 20, scale: 2),
                        ScreenDimensions(width: 10, height: 20, scale: 2))
     }
