@@ -24,7 +24,7 @@ final class NumericScalingTests: XCTestCase {
 
     func testIntAllProperties() {
         let v: Int = 50
-        let props: [CGFloat] = [v.w, v.h, v.sp, v.r, v.sw, v.sh, v.fastW, v.fastH, v.fastSp]
+        let props: [CGFloat] = [v.w, v.h, v.sp, v.r, v.sw, v.sh]
         for (i, p) in props.enumerated() {
             XCTAssertTrue(p.isFinite, "Int property[\(i)] not finite")
             XCTAssertGreaterThan(p, 0, "Int property[\(i)] not > 0")
@@ -40,16 +40,13 @@ final class NumericScalingTests: XCTestCase {
         XCTAssertEqual(v.r, su.r(CGFloat(v)), accuracy: 0.001)
         XCTAssertEqual(v.sw, su.sw(CGFloat(v)), accuracy: 0.001)
         XCTAssertEqual(v.sh, su.sh(CGFloat(v)), accuracy: 0.001)
-        XCTAssertEqual(v.fastW, su.fastW(CGFloat(v)), accuracy: 0.001)
-        XCTAssertEqual(v.fastH, su.fastH(CGFloat(v)), accuracy: 0.001)
-        XCTAssertEqual(v.fastSp, su.fastSp(CGFloat(v)), accuracy: 0.001)
     }
 
     // MARK: - Float
 
     func testFloatAllProperties() {
         let v: Float = 50.0
-        let props: [CGFloat] = [v.w, v.h, v.sp, v.r, v.sw, v.sh, v.fastW, v.fastH, v.fastSp]
+        let props: [CGFloat] = [v.w, v.h, v.sp, v.r, v.sw, v.sh]
         for (i, p) in props.enumerated() {
             XCTAssertTrue(p.isFinite, "Float property[\(i)] not finite")
             XCTAssertGreaterThan(p, 0, "Float property[\(i)] not > 0")
@@ -63,16 +60,13 @@ final class NumericScalingTests: XCTestCase {
         XCTAssertEqual(v.h, su.h(CGFloat(v)), accuracy: 0.001)
         XCTAssertEqual(v.sp, su.sp(CGFloat(v)), accuracy: 0.001)
         XCTAssertEqual(v.r, su.r(CGFloat(v)), accuracy: 0.001)
-        XCTAssertEqual(v.fastW, su.fastW(CGFloat(v)), accuracy: 0.001)
-        XCTAssertEqual(v.fastH, su.fastH(CGFloat(v)), accuracy: 0.001)
-        XCTAssertEqual(v.fastSp, su.fastSp(CGFloat(v)), accuracy: 0.001)
     }
 
     // MARK: - Double
 
     func testDoubleAllProperties() {
         let v: Double = 50.0
-        let props: [CGFloat] = [v.w, v.h, v.sp, v.r, v.sw, v.sh, v.fastW, v.fastH, v.fastSp]
+        let props: [CGFloat] = [v.w, v.h, v.sp, v.r, v.sw, v.sh]
         for (i, p) in props.enumerated() {
             XCTAssertTrue(p.isFinite, "Double property[\(i)] not finite")
             XCTAssertGreaterThan(p, 0, "Double property[\(i)] not > 0")
@@ -86,16 +80,13 @@ final class NumericScalingTests: XCTestCase {
         XCTAssertEqual(v.h, su.h(CGFloat(v)), accuracy: 0.001)
         XCTAssertEqual(v.sp, su.sp(CGFloat(v)), accuracy: 0.001)
         XCTAssertEqual(v.r, su.r(CGFloat(v)), accuracy: 0.001)
-        XCTAssertEqual(v.fastW, su.fastW(CGFloat(v)), accuracy: 0.001)
-        XCTAssertEqual(v.fastH, su.fastH(CGFloat(v)), accuracy: 0.001)
-        XCTAssertEqual(v.fastSp, su.fastSp(CGFloat(v)), accuracy: 0.001)
     }
 
     // MARK: - CGFloat
 
     func testCGFloatAllProperties() {
         let v: CGFloat = 50.0
-        let props: [CGFloat] = [v.w, v.h, v.sp, v.r, v.sw, v.sh, v.fastW, v.fastH, v.fastSp]
+        let props: [CGFloat] = [v.w, v.h, v.sp, v.r, v.sw, v.sh]
         for (i, p) in props.enumerated() {
             XCTAssertTrue(p.isFinite, "CGFloat property[\(i)] not finite")
             XCTAssertGreaterThan(p, 0, "CGFloat property[\(i)] not > 0")
@@ -111,15 +102,11 @@ final class NumericScalingTests: XCTestCase {
         XCTAssertEqual(v.r, su.r(v), accuracy: 0.001)
         XCTAssertEqual(v.sw, su.sw(v), accuracy: 0.001)
         XCTAssertEqual(v.sh, su.sh(v), accuracy: 0.001)
-        XCTAssertEqual(v.fastW, su.fastW(v), accuracy: 0.001)
-        XCTAssertEqual(v.fastH, su.fastH(v), accuracy: 0.001)
-        XCTAssertEqual(v.fastSp, su.fastSp(v), accuracy: 0.001)
     }
 
     // MARK: - Proportional correctness
 
     func testDoubleScalesProportionally() {
-        let su = ScreenUtil.shared
         let a: Double = 10.0
         let b: Double = 20.0
         XCTAssertEqual(b.w / a.w, 2.0, accuracy: 0.001, "scaling must be linear")

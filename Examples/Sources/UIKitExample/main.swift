@@ -209,7 +209,7 @@ class BasicUIKitViewController: UIViewController {
   
   @objc private func buttonTapped(_ sender: UIButton) {
     // Demonstrate debug functionality
-    ScreenUtil.shared.debug.printCurrentConfiguration()
+    ScreenUtilDebug.printCurrentConfiguration()
     
     // Show alert with responsive sizing
     let alert = UIAlertController(
@@ -278,8 +278,8 @@ class AdvancedUIKitViewController: UIViewController {
     
     // Demonstrate batch scaling for multiple values
     let values = [10, 20, 30, 40, 50]
-    let scaledWidths = ScreenUtil.shared.batchWidths(values)
-    let scaledHeights = ScreenUtil.shared.batchHeights(values)
+    let scaledWidths = ScreenUtil.shared.batchScaler.widths(values)
+    let scaledHeights = ScreenUtil.shared.batchScaler.heights(values)
     
     // Create visual representation
     let containerView = UIView()
@@ -457,7 +457,7 @@ class AdvancedUIKitViewController: UIViewController {
   
   @objc private func runPerformanceTest() {
     // Run performance benchmark
-    ScreenUtil.shared.debug.benchmarkScalingOperations()
+    ScreenUtilDebug.benchmarkScalingOperations()
     
     // Show results in alert
     let alert = UIAlertController(

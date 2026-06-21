@@ -26,7 +26,7 @@ final class BatchScalingTests: XCTestCase {
     func testBatchScaleWidth() {
         let su = ScreenUtil.shared
         let input: [CGFloat] = [10, 20, 30]
-        let out = su.batchScale(input, scaleType: .width)
+        let out = su.batchScaler.scale(input, scaleType: .width)
         XCTAssertEqual(out.count, 3)
         XCTAssertEqual(out[0], su.w(10), accuracy: 0.001)
         XCTAssertEqual(out[1], su.w(20), accuracy: 0.001)
@@ -37,7 +37,7 @@ final class BatchScalingTests: XCTestCase {
     func testBatchScaleHeight() {
         let su = ScreenUtil.shared
         let input: [CGFloat] = [5, 15, 25]
-        let out = su.batchScale(input, scaleType: .height)
+        let out = su.batchScaler.scale(input, scaleType: .height)
         XCTAssertEqual(out.count, 3)
         XCTAssertTrue(out.allSatisfy { $0.isFinite && $0 > 0 })
         XCTAssertEqual(out[0], su.h(5), accuracy: 0.001)
@@ -46,7 +46,7 @@ final class BatchScalingTests: XCTestCase {
     func testBatchScaleText() {
         let su = ScreenUtil.shared
         let input: [CGFloat] = [12, 14, 16, 18]
-        let out = su.batchScale(input, scaleType: .text)
+        let out = su.batchScaler.scale(input, scaleType: .text)
         XCTAssertEqual(out.count, 4)
         XCTAssertTrue(out.allSatisfy { $0.isFinite && $0 > 0 })
         XCTAssertEqual(out[0], su.sp(12), accuracy: 0.001)
@@ -55,7 +55,7 @@ final class BatchScalingTests: XCTestCase {
     func testBatchScaleRadius() {
         let su = ScreenUtil.shared
         let input: [CGFloat] = [4, 8, 12]
-        let out = su.batchScale(input, scaleType: .radius)
+        let out = su.batchScaler.scale(input, scaleType: .radius)
         XCTAssertEqual(out.count, 3)
         XCTAssertTrue(out.allSatisfy { $0.isFinite && $0 > 0 })
         XCTAssertEqual(out[0], su.r(4), accuracy: 0.001)
@@ -65,34 +65,34 @@ final class BatchScalingTests: XCTestCase {
 
     func testBatchWidthsMixedNumericTypes() {
         let su = ScreenUtil.shared
-        let intOut = su.batchWidths([Int(10), 20, 30])
+        let intOut = su.batchScaler.widths([Int(10), 20, 30])
         XCTAssertEqual(intOut.count, 3)
         XCTAssertTrue(intOut.allSatisfy { $0.isFinite && $0 > 0 })
 
-        let cgOut = su.batchWidths([CGFloat(5), 15])
+        let cgOut = su.batchScaler.widths([CGFloat(5), 15])
         XCTAssertTrue(cgOut.allSatisfy { $0.isFinite && $0 > 0 })
 
-        let int64Out = su.batchWidths([Int64(100), 200])
+        let int64Out = su.batchScaler.widths([Int64(100), 200])
         XCTAssertTrue(int64Out.allSatisfy { $0.isFinite && $0 > 0 })
     }
 
     func testBatchHeightsMixedNumericTypes() {
         let su = ScreenUtil.shared
-        let out = su.batchHeights([Int(50), 60, 70])
+        let out = su.batchScaler.heights([Int(50), 60, 70])
         XCTAssertEqual(out.count, 3)
         XCTAssertTrue(out.allSatisfy { $0 > 0 })
 
-        let floatOut = su.batchHeights([Float(10), 20])
+        let floatOut = su.batchScaler.heights([Float(10), 20])
         XCTAssertTrue(floatOut.allSatisfy { $0 > 0 })
     }
 
     func testBatchFontSizesMixedTypes() {
         let su = ScreenUtil.shared
-        let out = su.batchFontSizes([CGFloat(12), 14, 16])
+        let out = su.batchScaler.fontSizes([CGFloat(12), 14, 16])
         XCTAssertEqual(out.count, 3)
         XCTAssertTrue(out.allSatisfy { $0.isFinite && $0 > 0 })
 
-        let intOut = su.batchFontSizes([Int(10), 12])
+        let intOut = su.batchScaler.fontSizes([Int(10), 12])
         XCTAssertTrue(intOut.allSatisfy { $0 > 0 })
     }
 
@@ -101,7 +101,7 @@ final class BatchScalingTests: XCTestCase {
     func testBatchSizes() {
         let su = ScreenUtil.shared
         let sizes = [CGSize(width: 10, height: 20), CGSize(width: 30, height: 40)]
-        let out = su.batchSizes(sizes)
+        let out = su.batchScaler.sizes(sizes)
         XCTAssertEqual(out.count, 2)
         XCTAssertEqual(out[0].width, su.w(10), accuracy: 0.001)
         XCTAssertEqual(out[0].height, su.h(20), accuracy: 0.001)
@@ -110,7 +110,7 @@ final class BatchScalingTests: XCTestCase {
     }
 
     func testBatchSizesEmpty() {
-        let out = ScreenUtil.shared.batchSizes([])
+        let out = ScreenUtil.shared.batchScaler.sizes([])
         XCTAssertEqual(out.count, 0)
     }
 
@@ -119,7 +119,7 @@ final class BatchScalingTests: XCTestCase {
     func testBatchPoints() {
         let su = ScreenUtil.shared
         let points = [CGPoint(x: 5, y: 10), CGPoint(x: 15, y: 25)]
-        let out = su.batchPoints(points)
+        let out = su.batchScaler.points(points)
         XCTAssertEqual(out.count, 2)
         XCTAssertEqual(out[0].x, su.w(5), accuracy: 0.001)
         XCTAssertEqual(out[0].y, su.h(10), accuracy: 0.001)
@@ -134,7 +134,7 @@ final class BatchScalingTests: XCTestCase {
             CGRect(x: 1, y: 2, width: 10, height: 20),
             CGRect(x: 3, y: 4, width: 30, height: 40)
         ]
-        let out = su.batchRects(rects)
+        let out = su.batchScaler.rects(rects)
         XCTAssertEqual(out.count, 2)
         XCTAssertEqual(out[0].origin.x, su.w(1), accuracy: 0.001)
         XCTAssertEqual(out[0].origin.y, su.h(2), accuracy: 0.001)

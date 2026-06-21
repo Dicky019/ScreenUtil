@@ -69,22 +69,6 @@ final class ScreenUtilTests: XCTestCase {
         XCTAssertEqual(textResult, testValue * screenUtil.scaleText, accuracy: 0.01)
     }
     
-    func testFastScalingOperations() {
-        let testValue: CGFloat = 50.0
-        
-        let fastWidthResult = screenUtil.fastW(testValue)
-        let fastHeightResult = screenUtil.fastH(testValue)
-        let fastTextResult = screenUtil.fastSp(testValue)
-        
-        let normalWidthResult = screenUtil.w(testValue)
-        let normalHeightResult = screenUtil.h(testValue)
-        let normalTextResult = screenUtil.sp(testValue)
-        
-        XCTAssertEqual(fastWidthResult, normalWidthResult, accuracy: 0.01)
-        XCTAssertEqual(fastHeightResult, normalHeightResult, accuracy: 0.01)
-        XCTAssertEqual(fastTextResult, normalTextResult, accuracy: 0.01)
-    }
-    
     func testScreenPercentages() {
         let screenWidth = screenUtil.screenWidth
         let screenHeight = screenUtil.screenHeight
@@ -180,9 +164,9 @@ final class ScreenUtilTests: XCTestCase {
     func testBatchOperations() {
         let testValues = [10, 20, 30, 40, 50]
         
-        let batchWidths = screenUtil.batchWidths(testValues)
-        let batchHeights = screenUtil.batchHeights(testValues)
-        let batchFontSizes = screenUtil.batchFontSizes(testValues)
+        let batchWidths = screenUtil.batchScaler.widths(testValues)
+        let batchHeights = screenUtil.batchScaler.heights(testValues)
+        let batchFontSizes = screenUtil.batchScaler.fontSizes(testValues)
         
         XCTAssertEqual(batchWidths.count, testValues.count)
         XCTAssertEqual(batchHeights.count, testValues.count)

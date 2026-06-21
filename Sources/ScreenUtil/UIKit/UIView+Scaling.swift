@@ -13,25 +13,28 @@ public extension UIView {
     /// Apply width constraint with scaling
     @discardableResult
     func width(_ constant: CGFloat) -> NSLayoutConstraint {
-        let constraint = self.widthAnchor.constraint(equalToConstant: constant.w)
-        constraint.isActive = true
+        translatesAutoresizingMaskIntoConstraints = false
+        let constraint = widthAnchor.constraint(equalToConstant: constant.w)
+        NSLayoutConstraint.activate([constraint])
         return constraint
     }
 
     /// Apply height constraint with scaling
     @discardableResult
     func height(_ constant: CGFloat) -> NSLayoutConstraint {
-        let constraint = self.heightAnchor.constraint(equalToConstant: constant.h)
-        constraint.isActive = true
+        translatesAutoresizingMaskIntoConstraints = false
+        let constraint = heightAnchor.constraint(equalToConstant: constant.h)
+        NSLayoutConstraint.activate([constraint])
         return constraint
     }
 
     /// Apply size constraints with scaling
     @discardableResult
     func size(width: CGFloat, height: CGFloat) -> [NSLayoutConstraint] {
+        translatesAutoresizingMaskIntoConstraints = false
         let constraints = [
-            self.widthAnchor.constraint(equalToConstant: width.w),
-            self.heightAnchor.constraint(equalToConstant: height.h)
+            widthAnchor.constraint(equalToConstant: width.w),
+            heightAnchor.constraint(equalToConstant: height.h)
         ]
         NSLayoutConstraint.activate(constraints)
         return constraints

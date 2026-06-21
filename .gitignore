@@ -44,6 +44,10 @@ Examples/.build
 # Local-only project notes / planning artifacts (not committed)
 docs/
 .remember/
+.superpowers/
 
 # SPM
 .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
+
+# Graphify
+graphify-out/

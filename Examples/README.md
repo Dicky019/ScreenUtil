@@ -33,20 +33,15 @@ Complete SwiftUI implementation examples including:
 
 #### Basic SwiftUI Views
 - **BasicSwiftUIView**: Core SwiftUI usage patterns
-  - `.scaledSystem()` font modifier
-  - `.responsivePadding()` and `.responsiveCornerRadius()` modifiers
+  - `.font(.system(size: 16.sp))` — scale the size with `.sp` inside native font APIs
+  - `.frame(width: 200.w, height: 50.h)` / `.padding(.horizontal, 20.w)` — scale inside native modifiers
   - Grid layouts with responsive spacing
   - Screen metrics display
 
 #### Advanced SwiftUI Features
-- **PropertyWrappersDemo**: Property wrapper usage
-  - `@ScaledValue` for automatic value scaling
-  - `@ScreenPercentage` for percentage-based sizing
-  - `@ResponsiveFont` for adaptive typography
-
-- **ViewModifiersDemo**: Custom view modifiers
-  - `.responsiveFrame()` modifier
-  - `.responsivePadding()` modifier
+- **ViewModifiersDemo**: Scaling values inside native SwiftUI modifiers
+  - `.frame(width: 200.w, height: 100.h)`
+  - `.clipShape(RoundedRectangle(cornerRadius: 12.r, style: .continuous))`
   - Animated scaling examples
 
 #### Custom Components
@@ -65,7 +60,7 @@ label.font = .systemFont(ofSize: 16.sp)
 view.layer.cornerRadius = 8.r
 
 // SwiftUI
-Text("Hello").font(.scaledSystem(size: 16))
+Text("Hello").font(.system(size: 16.sp))
 Rectangle().frame(width: 100.w, height: 50.h)
 ```
 
@@ -86,8 +81,8 @@ ScreenUtil.shared.configure(with: config)
 ### 3. Batch Operations
 ```swift
 let values = [10, 20, 30, 40, 50]
-let scaledWidths = ScreenUtil.shared.batchWidths(values)
-let scaledHeights = ScreenUtil.shared.batchHeights(values)
+let scaledWidths = ScreenUtil.shared.batchScaler.widths(values)
+let scaledHeights = ScreenUtil.shared.batchScaler.heights(values)
 ```
 
 ### 4. Fast Scaling
@@ -108,13 +103,10 @@ print("Device: \(ScreenUtil.shared.deviceType)")
 ### 6. Debug Tools
 ```swift
 // Print current configuration
-ScreenUtil.shared.debug.printCurrentConfiguration()
+ScreenUtilDebug.printCurrentConfiguration()
 
 // Run performance benchmark
-ScreenUtil.shared.debug.benchmarkScalingOperations()
-
-// Generate test report
-let report = ScreenUtil.shared.debug.generateTestReport()
+ScreenUtilDebug.benchmarkScalingOperations()
 ```
 
 ## Usage Instructions

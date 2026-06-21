@@ -19,8 +19,8 @@
 - 🔒 **Thread-Safe** — lock-free reads via an atomic scale-factor snapshot (no torn reads)
 - 📱 **Design-Based Scaling** — scale UI relative to your design dimensions
 - 🎯 **Simple API** — intuitive extensions: `.w`, `.h`, `.sp`, `.r`
-- ⚡ **Fast Path** — capture-once `FastScale` for hot loops; `.fastW/.fastH/.fastSp` for quick reads
-- 📦 **Batch Scaling** — `BatchScaler` / `batch*` for bulk work
+- ⚡ **Fast Path** — capture-once `FastScale` for hot loops
+- 📦 **Batch Scaling** — `BatchScaler` / `withBatchScaler` for bulk work
 - 🔧 **UIKit & SwiftUI** — first-class support for both
 - 📊 **Percentage Sizing** — `.sw` / `.sh` for screen-relative layouts
 - 🖥️ **Multi-platform** — iOS, macOS, tvOS, watchOS
@@ -73,8 +73,8 @@ button.layer.cornerRadius = 12.r
 // SwiftUI
 Text("Hello World")
     .font(.system(size: 16.sp))
-    .responsiveFrame(width: 200, height: 50)
-    .responsivePadding(.all, 20)
+    .frame(width: 200.w, height: 50.h)
+    .padding(.horizontal, 20.w).padding(.vertical, 20.h)
 ```
 
 ## 📖 Usage
@@ -110,13 +110,11 @@ let fast = ScreenUtil.shared.fastScale
 view.frame = fast.rect(designRect)
 ```
 
-Per-value `.fastW` / `.fastH` / `.fastSp` skip the input validation but are only marginally faster than `.w`; prefer `FastScale` when you actually have a hot loop.
-
 ### Batch scaling
 
 ```swift
 let widths: [CGFloat] = [100, 200, 300, 400]
-let scaled = ScreenUtil.shared.batchWidths(widths)   // one factor lookup for all
+let scaled = ScreenUtil.shared.batchScaler.widths(widths)   // one factor lookup for all
 
 // Reusable scaler:
 let scaler = ScreenUtil.shared.batchScaler
@@ -124,7 +122,7 @@ let heights = scaler.heights([10, 20, 30])
 let fonts   = scaler.fontSizes([12, 14, 16])
 ```
 
-`batch*` and `BatchScaler` accept any `[T: Numeric]` (`Int`, `Double`, `CGFloat`, `Int64`, …).
+`BatchScaler` accepts any `[T: Numeric]` (`Int`, `Double`, `CGFloat`, `Int64`, …).
 
 ### Scaling limits
 
@@ -175,38 +173,43 @@ func collectionView(_ collectionView: UICollectionView,
 
 ## 🎨 SwiftUI
 
-### View modifiers
+### Scaling inside native modifiers
+
+Apply the `.w/.h/.sp/.r` properties directly inside SwiftUI's own modifiers — no wrappers needed:
 
 ```swift
 Image(systemName: "star.fill")
-    .responsiveFrame(width: 60, height: 60)
+    .frame(width: 60.w, height: 60.h)
 
 VStack {
-    Text("Welcome").font(.scaledSystem(size: 28, weight: .bold))
+    Text("Welcome").font(.system(size: 28.sp, weight: .bold))
 }
-.responsivePadding(.all, 20)
-.responsiveCornerRadius(16)
+.padding(.horizontal, 20.w).padding(.vertical, 20.h)
+.clipShape(RoundedRectangle(cornerRadius: 16.r, style: .continuous))
 ```
 
 ### Fonts
 
+Apply `.sp` to the size inside the native font APIs:
+
 ```swift
-Text("Title").font(.scaledSystem(size: 24, weight: .bold))
-Text("Body").font(.scaledCustom("Helvetica", size: 16))
+Text("Title").font(.system(size: 24.sp, weight: .bold))
+Text("Body").font(.custom("Helvetica", size: 16.sp))
 ```
 
-### Property wrappers
+### Scaling values
+
+Keep design values as plain constants and scale them at the call site with `.w/.h/.sp/.sw`:
 
 ```swift
 struct CardView: View {
-    @ScaledValue(.width)  private var cardWidth  = 300
-    @ScaledValue(.height) private var cardHeight = 200
-    @ScaledValue(.font)   private var titleSize  = 24
-    @ScreenPercentage(.width) private var halfWidth = 50   // 50% of screen width
+    private let cardWidth: CGFloat = 300
+    private let cardHeight: CGFloat = 200
+    private let titleSize: CGFloat = 24
 
     var body: some View {
-        VStack { /* ... */ }
-            .frame(width: cardWidth, height: cardHeight)
+        VStack { Text("Card").font(.system(size: titleSize.sp)) }
+            .frame(width: cardWidth.w, height: cardHeight.h)
     }
 }
 ```
@@ -229,7 +232,6 @@ struct CardView: View {
 | `.r` | Radius scaling | `12.r` |
 | `.sw` | Screen width percentage | `50.sw` |
 | `.sh` | Screen height percentage | `10.sh` |
-| `.fastW` `.fastH` `.fastSp` | Fast (unvalidated) variants | `100.fastW` |
 
 ### `ScreenUtil.shared`
 
@@ -258,13 +260,11 @@ var batchScaler: BatchScaler
 ## 🐛 Debugging
 
 ```swift
-ScreenUtil.shared.debug.printCurrentConfiguration()
-_ = ScreenUtil.shared.debug.validateScaling()
-let report = ScreenUtil.shared.debug.generateTestReport()
+ScreenUtilDebug.printCurrentConfiguration()
 
 #if DEBUG
-ScreenUtil.shared.debug.benchmarkScalingOperations()  // DEBUG builds only
-ScreenUtil.shared.debug.showDebugOverlay(on: view)    // UIKit
+ScreenUtilDebug.benchmarkScalingOperations()  // DEBUG builds only
+ScreenUtilDebug.showDebugOverlay(on: view)    // UIKit
 #endif
 ```
 
