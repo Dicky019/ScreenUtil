@@ -164,9 +164,9 @@ final class ScreenUtilTests: XCTestCase {
     func testBatchOperations() {
         let testValues = [10, 20, 30, 40, 50]
         
-        let batchWidths = screenUtil.batchWidths(testValues)
-        let batchHeights = screenUtil.batchHeights(testValues)
-        let batchFontSizes = screenUtil.batchFontSizes(testValues)
+        let batchWidths = screenUtil.batchScaler.widths(testValues)
+        let batchHeights = screenUtil.batchScaler.heights(testValues)
+        let batchFontSizes = screenUtil.batchScaler.fontSizes(testValues)
         
         XCTAssertEqual(batchWidths.count, testValues.count)
         XCTAssertEqual(batchHeights.count, testValues.count)

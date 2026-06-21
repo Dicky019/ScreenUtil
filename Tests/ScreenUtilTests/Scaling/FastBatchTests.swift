@@ -28,10 +28,10 @@ final class FastBatchTests: XCTestCase {
 
     func testBatchNumericTypesNeverZero() {
         let su = ScreenUtil.shared
-        XCTAssertTrue(su.batchWidths([CGFloat(10), 20, 30]).allSatisfy { $0 > 0 })
-        XCTAssertTrue(su.batchWidths([Int64(10), 20, 30]).allSatisfy { $0 > 0 })
-        XCTAssertTrue(su.batchHeights([10, 20]).allSatisfy { $0 > 0 })
-        XCTAssertTrue(su.batchFontSizes([Float(12), 14]).allSatisfy { $0 > 0 })
+        XCTAssertTrue(su.batchScaler.widths([CGFloat(10), 20, 30]).allSatisfy { $0 > 0 })
+        XCTAssertTrue(su.batchScaler.widths([Int64(10), 20, 30]).allSatisfy { $0 > 0 })
+        XCTAssertTrue(su.batchScaler.heights([10, 20]).allSatisfy { $0 > 0 })
+        XCTAssertTrue(su.batchScaler.fontSizes([Float(12), 14]).allSatisfy { $0 > 0 })
     }
 
     func testBatchScalerWidths() {
@@ -43,7 +43,7 @@ final class FastBatchTests: XCTestCase {
     func testBatchScaleAllTypes() {
         let su = ScreenUtil.shared
         for t: ScaleType in [.width, .height, .text, .radius] {
-            XCTAssertTrue(su.batchScale([10, 20], scaleType: t).allSatisfy { $0 > 0 })
+            XCTAssertTrue(su.batchScaler.scale([10, 20], scaleType: t).allSatisfy { $0 > 0 })
         }
     }
 }

@@ -32,7 +32,7 @@ final class PerformanceTests: XCTestCase {
         
         measure {
             for _ in 0..<100 {
-                _ = screenUtil.batchWidths(testValues)
+                _ = screenUtil.batchScaler.widths(testValues)
             }
         }
     }

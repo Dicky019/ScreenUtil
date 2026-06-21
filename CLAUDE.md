@@ -25,13 +25,12 @@ Organizing rule: **one platform = one place.** Everything outside `UIKit/` and `
 | `Scaling/Numeric+Scaling.swift` | `Int/Float/Double/CGFloat` `.w/.h/.sp/.r/.sw/.sh` |
 | `Scaling/CGGeometry+Scaling.swift` | `CGSize/CGPoint/CGRect` scaling (cross-platform) |
 | `Scaling/FastScale.swift` | `FastScale` capture-once struct for hot loops + `withFastScale` |
-| `Scaling/BatchScaling.swift` | `batch*` methods + `BatchScaler` for bulk scaling |
+| `Scaling/BatchScaling.swift` | `BatchScaler` / `withBatchScaler` for bulk scaling |
 | `UIKit/UIFont+Scaling.swift` | `UIFont` scaled helpers (`#if canImport(UIKit)`) |
 | `UIKit/UIView+Scaling.swift` | `UIView` constraint/styling + `NSLayoutConstraint.updateConstant` |
 | `UIKit/UIEdgeInsets+Scaling.swift` | `UIEdgeInsets.scaled(...)` |
-| `SwiftUI/View+Responsive.swift` | `View` modifiers, `Font.scaledSystem/scaledCustom`, `EnvironmentValues.screenUtil` |
-| `SwiftUI/ScaledValue.swift` | `@ScaledValue`, `@ScreenPercentage` property wrappers |
-| `Debug/ScreenUtilDebug.swift` | Debug logging, benchmarking, validation, overlay |
+| `SwiftUI/Environment+ScreenUtil.swift` | `EnvironmentValues.screenUtil` (injects `.shared`) |
+| `Debug/ScreenUtilDebug.swift` | `enum` namespace: debug logging, benchmarking, overlay |
 
 ## Public Contract (must not break)
 
@@ -40,8 +39,8 @@ Anything not reachable from this set is a removal/merge candidate.
 - `ScreenUtil.shared` + `configure(with:)` — singleton, configured once at launch.
 - Numeric scaling: `.w .h .sp .r .sw .sh`.
 - `ScreenUtilConfiguration` (+ presets) and `ScalingLimits`.
-- `FastScale` / `withFastScale`, `BatchScaler` / `withBatchScaler` / `batch*`.
-- SwiftUI: `responsiveFrame/responsivePadding/responsiveCornerRadius`, `Font.scaledSystem`, `@ScaledValue`, `@ScreenPercentage`.
+- `FastScale` / `withFastScale`, `BatchScaler` / `withBatchScaler`.
+- SwiftUI: `EnvironmentValues.screenUtil`.
 - UIKit: `UIFont.systemFont(…, scaled:)`, `UIView` helpers, `UIEdgeInsets.scaled`.
 
 ## Review Checklist (when editing)

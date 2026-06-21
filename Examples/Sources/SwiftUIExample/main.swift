@@ -44,7 +44,7 @@ struct BasicSwiftUIView: View {
     screenUtil.configure(with: .iPhone13Pro)
     
     // Optional: Print current configuration for debugging
-    screenUtil.debug.printCurrentConfiguration()
+    ScreenUtilDebug.printCurrentConfiguration()
   }
   
   // MARK: - Header Section
@@ -56,11 +56,11 @@ struct BasicSwiftUIView: View {
         .foregroundColor(.blue)
       
       Text("Responsive Design")
-        .font(.scaledSystem(size: 28, weight: .bold))
+        .font(.system(size: (28).sp, weight: .bold))
         .multilineTextAlignment(.center)
-      
+
       Text("Built with ScreenUtil for perfect adaptation across all devices")
-        .font(.scaledSystem(size: 16))
+        .font(.system(size: (16).sp))
         .foregroundColor(.secondary)
         .multilineTextAlignment(.center)
         .lineLimit(3)
@@ -79,7 +79,7 @@ struct BasicSwiftUIView: View {
     VStack(spacing: 16.h) {
       HStack {
         Text("Features")
-          .font(.scaledSystem(size: 22, weight: .semibold))
+          .font(.system(size: (22).sp, weight: .semibold))
         Spacer()
       }
       
@@ -120,7 +120,7 @@ struct BasicSwiftUIView: View {
     VStack(spacing: 20.h) {
       HStack {
         Text("Interactive Demo")
-          .font(.scaledSystem(size: 22, weight: .semibold))
+          .font(.system(size: (22).sp, weight: .semibold))
         Spacer()
       }
       
@@ -150,7 +150,7 @@ struct BasicSwiftUIView: View {
           Spacer()
           Image(systemName: "chevron.right")
         }
-        .font(.scaledSystem(size: 16, weight: .medium))
+        .font(.system(size: (16).sp, weight: .medium))
         .padding(.horizontal, 16.w)
         .padding(.vertical, 12.h)
         .background(
@@ -167,7 +167,7 @@ struct BasicSwiftUIView: View {
   private var infoSection: some View {
     VStack(alignment: .leading, spacing: 12.h) {
       Text("Screen Metrics")
-        .font(.scaledSystem(size: 18, weight: .semibold))
+        .font(.system(size: (18).sp, weight: .semibold))
       
       InfoRow(label: "Screen Size", value: "\(Int(ScreenUtil.shared.getScreenMetrics().width)) x \(Int(ScreenUtil.shared.getScreenMetrics().height)) pts")
       InfoRow(label: "Scale Factor", value: "\(ScreenUtil.shared.getScreenMetrics().scale)x")
@@ -200,11 +200,11 @@ struct FeatureCard: View {
         .foregroundColor(.blue)
       
       Text(title)
-        .font(.scaledSystem(size: 14, weight: .semibold))
+        .font(.system(size: (14).sp, weight: .semibold))
         .lineLimit(1)
-      
+
       Text(description)
-        .font(.scaledSystem(size: 12))
+        .font(.system(size: (12).sp))
         .foregroundColor(.secondary)
         .multilineTextAlignment(.center)
         .lineLimit(2)
@@ -234,7 +234,7 @@ struct ResponsiveButton: View {
   var body: some View {
     Button(action: action) {
       Text(title)
-        .font(.scaledSystem(size: 16, weight: .medium))
+        .font(.system(size: (16).sp, weight: .medium))
         .foregroundColor(style == .primary ? .white : .blue)
         .frame(maxWidth: .infinity)
         .frame(height: 44.h)
@@ -259,7 +259,7 @@ struct ScalingDemoView: View {
   var body: some View {
     VStack(spacing: 16.h) {
       Text("Scaling Types Demo")
-        .font(.scaledSystem(size: 16, weight: .medium))
+        .font(.system(size: (16).sp, weight: .medium))
       
       // Scale type picker
       Picker("Scale Type", selection: $selectedScale) {
@@ -282,7 +282,7 @@ struct ScalingDemoView: View {
               .frame(width: 20.w, height: scaledValue)
             
             Text("\(Int(scaledValue))")
-              .font(.scaledSystem(size: 10))
+              .font(.system(size: (10).sp))
               .foregroundColor(.secondary)
           }
         }
@@ -306,13 +306,13 @@ struct InfoRow: View {
   var body: some View {
     HStack {
       Text(label)
-        .font(.scaledSystem(size: 14))
+        .font(.system(size: (14).sp))
         .foregroundColor(.secondary)
-      
+
       Spacer()
-      
+
       Text(value)
-        .font(.scaledSystem(size: 14, weight: .medium))
+        .font(.system(size: (14).sp, weight: .medium))
     }
   }
 }
@@ -323,87 +323,12 @@ struct AdvancedSwiftUIView: View {
   var body: some View {
     NavigationView {
       List {
-        NavigationLink("Property Wrappers", destination: PropertyWrappersDemo())
         NavigationLink("View Modifiers", destination: ViewModifiersDemo())
         NavigationLink("Responsive Layout", destination: ResponsiveLayoutDemo())
         NavigationLink("Custom Components", destination: CustomComponentsDemo())
       }
       .navigationTitle("Advanced Examples")
     }
-  }
-}
-
-// MARK: - Property Wrappers Demo
-
-struct PropertyWrappersDemo: View {
-  @ScaledValue(wrappedValue: 100, .width) private var scaledWidth
-  @ScaledValue(wrappedValue:50, .height) private var scaledHeight
-  @ScaledValue(wrappedValue:16, .font) private var scaledFontSize
-  @ScreenPercentage(wrappedValue:25, .width) private var screenPercentage
-  
-  var body: some View {
-    VStack(spacing: 24.h) {
-      Text("Property Wrappers Demo")
-        .font(.scaledSystem(size: 24, weight: .bold))
-      
-      VStack(alignment: .leading, spacing: 16.h) {
-        PropertyWrapperCard(
-          title: "@ScaledValue",
-          description: "Automatically scales values based on screen size",
-          example: "Width: \(Int(scaledWidth)), Height: \(Int(scaledHeight))"
-        )
-        
-        PropertyWrapperCard(
-          title: "@ScreenPercentage",
-          description: "Uses percentage of screen dimensions",
-          example: "25% of screen width: \(Int(screenPercentage))"
-        )
-        
-        PropertyWrapperCard(
-          title: "@ResponsiveFont",
-          description: "Scales font size automatically",
-          example: "Font size: \(Int(scaledFontSize))sp"
-        )
-      }
-      
-      Spacer()
-    }
-    .padding(20.w)
-    .navigationTitle("Property Wrappers")
-    .navigationBarTitleDisplayMode(.inline)
-  }
-}
-
-struct PropertyWrapperCard: View {
-  let title: String
-  let description: String
-  let example: String
-  
-  var body: some View {
-    VStack(alignment: .leading, spacing: 8.h) {
-      Text(title)
-        .font(.scaledSystem(size: 16, weight: .semibold))
-        .foregroundColor(.blue)
-      
-      Text(description)
-        .font(.scaledSystem(size: 14))
-        .foregroundColor(.secondary)
-      
-      Text(example)
-        .font(.scaledSystem(size: 12, design: .monospaced))
-        .foregroundColor(.green)
-        .padding(.horizontal, 12.w)
-        .padding(.vertical, 6.h)
-        .background(
-          RoundedRectangle(cornerRadius: 4.r)
-            .fill(Color.green.opacity(0.1))
-        )
-    }
-    .padding(16.w)
-    .background(
-      RoundedRectangle(cornerRadius: 12.r)
-        .fill(Color(.secondarySystemBackground))
-    )
   }
 }
 
@@ -414,25 +339,25 @@ struct ViewModifiersDemo: View {
     ScrollView {
       VStack(spacing: 24.h) {
         Text("View Modifiers Demo")
-          .font(.scaledSystem(size: 24, weight: .bold))
-        
+          .font(.system(size: (24).sp, weight: .bold))
+
         // Responsive padding
         Text("Responsive Padding")
-          .font(.scaledSystem(size: 16, weight: .medium))
+          .font(.system(size: (16).sp, weight: .medium))
           .padding(.horizontal, 20.w)
           .padding(.vertical, 8.w)
           .background(Color.blue.opacity(0.1))
-          .responsiveCornerRadius(8)
+          .clipShape(RoundedRectangle(cornerRadius: 8.r, style: .continuous))
         
         // Responsive frame
         Rectangle()
           .fill(Color.green)
-          .responsiveFrame(width: 200, height: 100)
-          .responsiveCornerRadius(12)
+          .frame(width: 200.w, height: 100.h)
+          .clipShape(RoundedRectangle(cornerRadius: 12.r, style: .continuous))
         
         // Custom responsive modifier
         Text("Custom Modifier")
-          .font(.scaledSystem(size: 14))
+          .font(.system(size: (14).sp))
           .responsiveCard()
         
         // Animated scaling
@@ -453,7 +378,7 @@ struct AnimatedScalingExample: View {
   var body: some View {
     VStack(spacing: 16.h) {
       Text("Animated Scaling")
-        .font(.scaledSystem(size: 18, weight: .semibold))
+        .font(.system(size: (18).sp, weight: .semibold))
       
       Circle()
         .fill(Color.purple)
@@ -466,12 +391,12 @@ struct AnimatedScalingExample: View {
       Button("Toggle Scale") {
         isScaled.toggle()
       }
-      .font(.scaledSystem(size: 16, weight: .medium))
+      .font(.system(size: (16).sp, weight: .medium))
       .foregroundColor(.white)
       .padding(.horizontal, 24.w)
       .padding(.vertical, 12.h)
       .background(Color.purple)
-      .responsiveCornerRadius(8)
+      .clipShape(RoundedRectangle(cornerRadius: 8.r, style: .continuous))
     }
   }
 }
@@ -483,7 +408,7 @@ struct ResponsiveLayoutDemo: View {
     ScrollView {
       VStack(spacing: 24.h) {
         Text("Responsive Layout")
-          .font(.scaledSystem(size: 24, weight: .bold))
+          .font(.system(size: (24).sp, weight: .bold))
         
         // Responsive grid
         ResponsiveGrid()
@@ -515,7 +440,7 @@ struct ResponsiveGrid: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 12.h) {
       Text("Responsive Grid")
-        .font(.scaledSystem(size: 18, weight: .semibold))
+        .font(.system(size: (18).sp, weight: .semibold))
       
       LazyVGrid(columns: columns, spacing: 8.h) {
         ForEach(items, id: \.self) { item in
@@ -524,7 +449,7 @@ struct ResponsiveGrid: View {
             .aspectRatio(1, contentMode: .fit)
             .overlay(
               Text("\(item)")
-                .font(.scaledSystem(size: 14, weight: .bold))
+                .font(.system(size: (14).sp, weight: .bold))
                 .foregroundColor(.white)
             )
         }
@@ -537,7 +462,7 @@ struct AdaptiveStackExample: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 12.h) {
       Text("Adaptive Stack")
-        .font(.scaledSystem(size: 18, weight: .semibold))
+        .font(.system(size: (18).sp, weight: .semibold))
       
       // This would adapt based on screen size in a real implementation
       HStack(spacing: 12.w) {
@@ -548,7 +473,7 @@ struct AdaptiveStackExample: View {
               .frame(width: 40.w, height: 40.h)
             
             Text("Item \(index)")
-              .font(.scaledSystem(size: 12))
+              .font(.system(size: (12).sp))
           }
           .frame(maxWidth: .infinity)
           .padding(.vertical, 16.h)
@@ -566,7 +491,7 @@ struct ResponsiveSpacingExample: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 12.h) {
       Text("Responsive Spacing")
-        .font(.scaledSystem(size: 18, weight: .semibold))
+        .font(.system(size: (18).sp, weight: .semibold))
       
       VStack(spacing: 16.h) {
         ForEach(1...4, id: \.self) { index in
@@ -576,7 +501,7 @@ struct ResponsiveSpacingExample: View {
               .frame(width: 4.w, height: 20.h)
             
             Text("Spacing example \(index)")
-              .font(.scaledSystem(size: 14))
+              .font(.system(size: (14).sp))
             
             Spacer()
           }
@@ -595,11 +520,11 @@ struct PerformanceDemoView: View {
   var body: some View {
     VStack(spacing: 24.h) {
       Text("Performance Testing")
-        .font(.scaledSystem(size: 24, weight: .bold))
+        .font(.system(size: (24).sp, weight: .bold))
       
       Button(action: runPerformanceTest) {
         Text(isRunning ? "Running..." : "Run Performance Test")
-          .font(.scaledSystem(size: 16, weight: .medium))
+          .font(.system(size: (16).sp, weight: .medium))
           .foregroundColor(.white)
           .frame(maxWidth: .infinity)
           .frame(height: 44.h)
@@ -613,7 +538,7 @@ struct PerformanceDemoView: View {
       if !results.isEmpty {
         ScrollView {
           Text(results)
-            .font(.scaledSystem(size: 12, design: .monospaced))
+            .font(.system(size: (12).sp, design: .monospaced))
             .padding(16.w)
             .background(
               RoundedRectangle(cornerRadius: 8.r)
@@ -656,7 +581,7 @@ struct PerformanceDemoView: View {
       let batchTest = measureTime {
         let values = Array(1...1000)
         for _ in 0..<100 {
-          _ = ScreenUtil.shared.batchWidths(values)
+          _ = ScreenUtil.shared.batchScaler.widths(values)
         }
       }
       
@@ -693,7 +618,7 @@ struct CustomComponentsDemo: View {
     ScrollView {
       VStack(spacing: 24.h) {
         Text("Custom Components")
-          .font(.scaledSystem(size: 24, weight: .bold))
+          .font(.system(size: (24).sp, weight: .bold))
         
         ResponsiveProfileCard()
         
@@ -714,7 +639,7 @@ struct ResponsiveProfileCard: View {
   var body: some View {
     VStack(spacing: 16.h) {
       Text("Profile Card")
-        .font(.scaledSystem(size: 18, weight: .semibold))
+        .font(.system(size: (18).sp, weight: .semibold))
       
       HStack(spacing: 16.w) {
         Circle()
@@ -728,23 +653,23 @@ struct ResponsiveProfileCard: View {
           .frame(width: 60.w, height: 60.h)
           .overlay(
             Text("JD")
-              .font(.scaledSystem(size: 20, weight: .bold))
+              .font(.system(size: (20).sp, weight: .bold))
               .foregroundColor(.white)
           )
         
         VStack(alignment: .leading, spacing: 4.h) {
           Text("John Doe")
-            .font(.scaledSystem(size: 16, weight: .semibold))
-          
+            .font(.system(size: (16).sp, weight: .semibold))
+
           Text("iOS Developer")
-            .font(.scaledSystem(size: 14))
+            .font(.system(size: (14).sp))
             .foregroundColor(.secondary)
           
           HStack(spacing: 4.w) {
             Image(systemName: "location.fill")
               .font(.system(size: 10.sp))
             Text("San Francisco, CA")
-              .font(.scaledSystem(size: 12))
+              .font(.system(size: (12).sp))
           }
           .foregroundColor(.secondary)
         }
@@ -767,17 +692,17 @@ struct ResponsiveProgressBar: View {
   var body: some View {
     VStack(spacing: 16.h) {
       Text("Progress Bar")
-        .font(.scaledSystem(size: 18, weight: .semibold))
+        .font(.system(size: (18).sp, weight: .semibold))
       
       VStack(alignment: .leading, spacing: 8.h) {
         HStack {
           Text("Project Progress")
-            .font(.scaledSystem(size: 14, weight: .medium))
-          
+            .font(.system(size: (14).sp, weight: .medium))
+
           Spacer()
-          
+
           Text("\(Int(progress * 100))%")
-            .font(.scaledSystem(size: 12, weight: .medium))
+            .font(.system(size: (12).sp, weight: .medium))
             .foregroundColor(.blue)
         }
         
@@ -810,7 +735,7 @@ struct ResponsiveProgressBar: View {
       Button("Update Progress") {
         progress = Double.random(in: 0.3...1.0)
       }
-      .font(.scaledSystem(size: 14, weight: .medium))
+      .font(.system(size: (14).sp, weight: .medium))
     }
   }
 }
@@ -826,7 +751,7 @@ struct ResponsiveStatsView: View {
   var body: some View {
     VStack(spacing: 16.h) {
       Text("Statistics")
-        .font(.scaledSystem(size: 18, weight: .semibold))
+        .font(.system(size: (18).sp, weight: .semibold))
       
       LazyVGrid(columns: [
         GridItem(.flexible(), spacing: 8.w),
@@ -837,11 +762,11 @@ struct ResponsiveStatsView: View {
           
           VStack(spacing: 8.h) {
             Text(value)
-              .font(.scaledSystem(size: 24, weight: .bold))
+              .font(.system(size: (24).sp, weight: .bold))
               .foregroundColor(color)
-            
+
             Text(title)
-              .font(.scaledSystem(size: 12))
+              .font(.system(size: (12).sp))
               .foregroundColor(.secondary)
           }
           .frame(maxWidth: .infinity)
