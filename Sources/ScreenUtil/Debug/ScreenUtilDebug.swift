@@ -55,7 +55,7 @@ public struct ScreenUtilDebug: Sendable {
         return (result, averageTime)
     }
 
-    /// Benchmarks standard, fast, and batch scaling paths and logs the results.
+    /// Benchmarks standard, FastScale, and batch scaling paths and logs the results.
     public func benchmarkScalingOperations() {
         let testValue: CGFloat = 100.0
         let iterations = 100000
@@ -67,7 +67,7 @@ public struct ScreenUtilDebug: Sendable {
         }, iterations: iterations)
 
         let fastW = measurePerformance({
-            testValue.fastW
+            withFastScale { $0.width(testValue) }
         }, iterations: iterations)
 
         let batchOperation = measurePerformance({
@@ -75,11 +75,11 @@ public struct ScreenUtilDebug: Sendable {
         }, iterations: iterations / 10)
 
         Log(.benchmark, "Standard .w: \(String(format: "%.2f", standardW.averageTime * 1_000_000)) μs")
-        Log(.benchmark, "Fast .fastW: \(String(format: "%.2f", fastW.averageTime * 1_000_000)) μs")
+        Log(.benchmark, "FastScale .width: \(String(format: "%.2f", fastW.averageTime * 1_000_000)) μs")
         Log(.benchmark, "Batch operation: \(String(format: "%.2f", batchOperation.averageTime * 1_000_000)) μs")
 
         let speedup = standardW.averageTime / fastW.averageTime
-        Log(.benchmark, "Fast path is \(String(format: "%.1f", speedup))x faster")
+        Log(.benchmark, "FastScale path is \(String(format: "%.1f", speedup))x faster")
     }
     #endif
 

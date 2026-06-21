@@ -27,16 +27,6 @@ final class PerformanceTests: XCTestCase {
         }
     }
     
-    func testFastScalingPerformance() {
-        let testValue: CGFloat = 100.0
-        
-        measure {
-            for _ in 0..<10000 {
-                _ = testValue.fastW
-            }
-        }
-    }
-    
     func testBatchOperationsPerformance() {
         let testValues = Array(1...100).map { CGFloat($0) }
         
@@ -135,27 +125,6 @@ final class PerformanceTests: XCTestCase {
                 _ = batchScaler.fontSizes(testValues)
             }
         }
-    }
-    
-    func testPerformanceComparison() {
-        let iterations = 50000
-        let testValue: CGFloat = 100.0
-        
-        let standardTime = measureTime {
-            for _ in 0..<iterations {
-                _ = testValue.w
-            }
-        }
-        
-        let fastTime = measureTime {
-            for _ in 0..<iterations {
-                _ = testValue.fastW
-            }
-        }
-        
-        let speedup = standardTime / fastTime
-        print("Fast path is \(String(format: "%.1f", speedup))x faster")
-        XCTAssertGreaterThan(speedup, 1.0, "Fast path should be faster than standard path")
     }
     
     private func measureTime(_ block: () -> Void) -> TimeInterval {

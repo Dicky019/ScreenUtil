@@ -45,24 +45,6 @@ public extension Int {
     var sh: CGFloat {
         return ScreenUtil.shared.sh(CGFloat(self))
     }
-
-    /// Width-scaled value using the cached fast path (lower overhead than `.w` for tight loops).
-    @inline(__always)
-    var fastW: CGFloat {
-        return ScreenUtil.shared.fastW(CGFloat(self))
-    }
-
-    /// Height-scaled value using the cached fast path (lower overhead than `.h` for tight loops).
-    @inline(__always)
-    var fastH: CGFloat {
-        return ScreenUtil.shared.fastH(CGFloat(self))
-    }
-
-    /// Font-size-scaled value using the cached fast path (lower overhead than `.sp` for tight loops).
-    @inline(__always)
-    var fastSp: CGFloat {
-        return ScreenUtil.shared.fastSp(CGFloat(self))
-    }
 }
 
 public extension Float {
@@ -100,24 +82,6 @@ public extension Float {
     @inline(__always)
     var sh: CGFloat {
         return ScreenUtil.shared.sh(CGFloat(self))
-    }
-
-    /// Width-scaled value using the cached fast path (lower overhead than `.w` for tight loops).
-    @inline(__always)
-    var fastW: CGFloat {
-        return ScreenUtil.shared.fastW(CGFloat(self))
-    }
-
-    /// Height-scaled value using the cached fast path (lower overhead than `.h` for tight loops).
-    @inline(__always)
-    var fastH: CGFloat {
-        return ScreenUtil.shared.fastH(CGFloat(self))
-    }
-
-    /// Font-size-scaled value using the cached fast path (lower overhead than `.sp` for tight loops).
-    @inline(__always)
-    var fastSp: CGFloat {
-        return ScreenUtil.shared.fastSp(CGFloat(self))
     }
 }
 
@@ -157,24 +121,6 @@ public extension Double {
     var sh: CGFloat {
         return ScreenUtil.shared.sh(CGFloat(self))
     }
-
-    /// Width-scaled value using the cached fast path (lower overhead than `.w` for tight loops).
-    @inline(__always)
-    var fastW: CGFloat {
-        return ScreenUtil.shared.fastW(CGFloat(self))
-    }
-
-    /// Height-scaled value using the cached fast path (lower overhead than `.h` for tight loops).
-    @inline(__always)
-    var fastH: CGFloat {
-        return ScreenUtil.shared.fastH(CGFloat(self))
-    }
-
-    /// Font-size-scaled value using the cached fast path (lower overhead than `.sp` for tight loops).
-    @inline(__always)
-    var fastSp: CGFloat {
-        return ScreenUtil.shared.fastSp(CGFloat(self))
-    }
 }
 
 public extension CGFloat {
@@ -212,23 +158,5 @@ public extension CGFloat {
     @inline(__always)
     var sh: CGFloat {
         return ScreenUtil.shared.sh(self)
-    }
-
-    /// Width-scaled value using the cached fast path (lower overhead than `.w` for tight loops).
-    @inline(__always)
-    var fastW: CGFloat {
-        return ScreenUtil.shared.fastW(self)
-    }
-
-    /// Height-scaled value using the cached fast path (lower overhead than `.h` for tight loops).
-    @inline(__always)
-    var fastH: CGFloat {
-        return ScreenUtil.shared.fastH(self)
-    }
-
-    /// Font-size-scaled value using the cached fast path (lower overhead than `.sp` for tight loops).
-    @inline(__always)
-    var fastSp: CGFloat {
-        return ScreenUtil.shared.fastSp(self)
     }
 }

@@ -83,9 +83,9 @@ final class FastScaleExtendedTests: XCTestCase {
     func testFastScaleWidthHeightTextRadius() {
         let fs = ScreenUtil.shared.fastScale
         let su = ScreenUtil.shared
-        XCTAssertEqual(fs.width(100), su.fastW(100), accuracy: 0.001)
-        XCTAssertEqual(fs.height(100), su.fastH(100), accuracy: 0.001)
-        XCTAssertEqual(fs.text(100), su.fastSp(100), accuracy: 0.001)
+        XCTAssertEqual(fs.width(100), su.w(100), accuracy: 0.001)
+        XCTAssertEqual(fs.height(100), su.h(100), accuracy: 0.001)
+        XCTAssertEqual(fs.text(100), su.sp(100), accuracy: 0.001)
         XCTAssertGreaterThan(fs.radius(100), 0)
     }
 

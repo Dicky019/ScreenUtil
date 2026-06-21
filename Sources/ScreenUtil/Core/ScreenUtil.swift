@@ -157,7 +157,4 @@ public extension ScreenUtil {
     @inline(__always) func r(_ value: CGFloat) -> CGFloat { scale(for: value, scaleType: .radius) }
     @inline(__always) func sw(_ percentage: CGFloat) -> CGFloat { screenWidth * (percentage / 100.0) }
     @inline(__always) func sh(_ percentage: CGFloat) -> CGFloat { screenHeight * (percentage / 100.0) }
-    @inline(__always) func fastW(_ value: CGFloat) -> CGFloat { value * _snapshot.scaleWidth }
-    @inline(__always) func fastH(_ value: CGFloat) -> CGFloat { value * _snapshot.scaleHeight }
-    @inline(__always) func fastSp(_ value: CGFloat) -> CGFloat { value * _snapshot.scaleText }
 }
