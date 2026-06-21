@@ -31,7 +31,7 @@ public final class ScreenUtil: ScreenScalable, ScreenDimensionProvider, Sendable
     private init() {}
 
     /// One consistent, nonisolated snapshot read.
-    internal var _snapshot: Snapshot { snapshot.load(ordering: .acquiring) }
+    @usableFromInline internal var _snapshot: Snapshot { snapshot.load(ordering: .acquiring) }
 
     // MARK: Configuration (main actor)
 
@@ -54,7 +54,7 @@ public final class ScreenUtil: ScreenScalable, ScreenDimensionProvider, Sendable
     @MainActor
     private func rebuildSnapshot() {
         let dims = ScreenDimensions.current
-        let safe = SafeAreaInsets.current
+        let safe = Self.nativeSafeArea()
         let device = DeviceType.current
         let design = configuration.designSize
 
@@ -71,12 +71,41 @@ public final class ScreenUtil: ScreenScalable, ScreenDimensionProvider, Sendable
                 screenWidth: dims.width,
                 screenHeight: dims.height,
                 screenScale: dims.scale,
-                safeArea: safe,
+                safeAreaTop: safe.top,
+                safeAreaBottom: safe.bottom,
+                safeAreaLeft: safe.left,
+                safeAreaRight: safe.right,
+                statusBarHeight: safe.statusBar,
                 deviceType: device
             ),
             ordering: .releasing
         )
     }
+
+    /// Native window safe-area insets + status bar height, captured at rebuild
+    /// (rotation / scene-activate). Returns 0 when no active window is available.
+    #if canImport(UIKit) && !os(watchOS)
+    @MainActor
+    private static func nativeSafeArea() -> (top: CGFloat, bottom: CGFloat, left: CGFloat, right: CGFloat, statusBar: CGFloat) {
+        let scenes = UIApplication.shared.connectedScenes
+        let scene = (scenes.first { $0.activationState == .foregroundActive }
+                     ?? scenes.first) as? UIWindowScene
+        guard let scene, let window = scene.keyWindow ?? scene.windows.first else {
+            return (0, 0, 0, 0, 0)
+        }
+        let i = window.safeAreaInsets
+        #if os(iOS)
+        let status = scene.statusBarManager?.statusBarFrame.height ?? 0
+        #else
+        let status: CGFloat = 0   // tvOS has no status bar
+        #endif
+        return (i.top, i.bottom, i.left, i.right, status)
+    }
+    #else
+    private static func nativeSafeArea() -> (top: CGFloat, bottom: CGFloat, left: CGFloat, right: CGFloat, statusBar: CGFloat) {
+        (0, 0, 0, 0, 0)
+    }
+    #endif
 
     @MainActor
     private func startObservingIfNeeded() {
@@ -99,8 +128,8 @@ public final class ScreenUtil: ScreenScalable, ScreenDimensionProvider, Sendable
 
     // MARK: Scaling (nonisolated)
 
-    @inline(__always)
-    private func scaleFactor(for scaleType: ScaleType) -> CGFloat {
+    @inlinable @inline(__always)
+    func scaleFactor(for scaleType: ScaleType) -> CGFloat {
         let s = _snapshot
         switch scaleType {
         case .width:  return s.scaleWidth
@@ -110,16 +139,19 @@ public final class ScreenUtil: ScreenScalable, ScreenDimensionProvider, Sendable
         }
     }
 
-    @inline(__always)
+    @inlinable @inline(__always)
     public func scale(for value: CGFloat, scaleType: ScaleType) -> CGFloat {
-        guard value.isFinite else {
-            Log(.core, "Invalid input value \(value) for scale type \(scaleType)", level: .warning)
-            return 0
-        }
+        guard value.isFinite else { return Self.invalidScaleResult(value, scaleType) }
         return value * scaleFactor(for: scaleType)
     }
 
-    @inline(__always)
+    @usableFromInline
+    static func invalidScaleResult(_ value: CGFloat, _ scaleType: ScaleType) -> CGFloat {
+        Log(.core, "Invalid input value \(value) for scale type \(scaleType)", level: .warning)
+        return 0
+    }
+
+    @inlinable @inline(__always)
     public func fastScale(for value: CGFloat, scaleType: ScaleType) -> CGFloat {
         return value * scaleFactor(for: scaleType)
     }
@@ -128,11 +160,11 @@ public final class ScreenUtil: ScreenScalable, ScreenDimensionProvider, Sendable
 
     public var screenWidth: CGFloat { _snapshot.screenWidth }
     public var screenHeight: CGFloat { _snapshot.screenHeight }
-    public var safeAreaTop: CGFloat { _snapshot.safeArea.top }
-    public var safeAreaBottom: CGFloat { _snapshot.safeArea.bottom }
-    public var safeAreaLeft: CGFloat { _snapshot.safeArea.left }
-    public var safeAreaRight: CGFloat { _snapshot.safeArea.right }
-    public var statusBarHeight: CGFloat { _snapshot.safeArea.statusBarHeight }
+    public var safeAreaTop: CGFloat { _snapshot.safeAreaTop }
+    public var safeAreaBottom: CGFloat { _snapshot.safeAreaBottom }
+    public var safeAreaLeft: CGFloat { _snapshot.safeAreaLeft }
+    public var safeAreaRight: CGFloat { _snapshot.safeAreaRight }
+    public var statusBarHeight: CGFloat { _snapshot.statusBarHeight }
     public var scaleWidth: CGFloat { _snapshot.scaleWidth }
     public var scaleHeight: CGFloat { _snapshot.scaleHeight }
     public var scaleText: CGFloat { _snapshot.scaleText }
@@ -144,17 +176,17 @@ public final class ScreenUtil: ScreenScalable, ScreenDimensionProvider, Sendable
             width: s.screenWidth,
             height: s.screenHeight,
             scale: s.screenScale,
-            safeAreaInsets: (s.safeArea.top, s.safeArea.bottom, s.safeArea.left, s.safeArea.right),
-            statusBarHeight: s.safeArea.statusBarHeight
+            safeAreaInsets: (s.safeAreaTop, s.safeAreaBottom, s.safeAreaLeft, s.safeAreaRight),
+            statusBarHeight: s.statusBarHeight
         )
     }
 }
 
 public extension ScreenUtil {
-    @inline(__always) func w(_ value: CGFloat) -> CGFloat { scale(for: value, scaleType: .width) }
-    @inline(__always) func h(_ value: CGFloat) -> CGFloat { scale(for: value, scaleType: .height) }
-    @inline(__always) func sp(_ value: CGFloat) -> CGFloat { scale(for: value, scaleType: .text) }
-    @inline(__always) func r(_ value: CGFloat) -> CGFloat { scale(for: value, scaleType: .radius) }
-    @inline(__always) func sw(_ percentage: CGFloat) -> CGFloat { screenWidth * (percentage / 100.0) }
-    @inline(__always) func sh(_ percentage: CGFloat) -> CGFloat { screenHeight * (percentage / 100.0) }
+    @inlinable @inline(__always) func w(_ value: CGFloat) -> CGFloat { scale(for: value, scaleType: .width) }
+    @inlinable @inline(__always) func h(_ value: CGFloat) -> CGFloat { scale(for: value, scaleType: .height) }
+    @inlinable @inline(__always) func sp(_ value: CGFloat) -> CGFloat { scale(for: value, scaleType: .text) }
+    @inlinable @inline(__always) func r(_ value: CGFloat) -> CGFloat { scale(for: value, scaleType: .radius) }
+    @inlinable @inline(__always) func sw(_ percentage: CGFloat) -> CGFloat { screenWidth * (percentage / 100.0) }
+    @inlinable @inline(__always) func sh(_ percentage: CGFloat) -> CGFloat { screenHeight * (percentage / 100.0) }
 }

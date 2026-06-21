@@ -15,12 +15,10 @@ Organizing rule: **one platform = one place.** Everything outside `UIKit/` and `
 | `Core/ScaleType.swift` | Protocols (`ScreenScalable`, `ScreenUtilConfigurable`, `ScreenDimensionProvider`) + `ScaleType` |
 | `Core/ScalingLimits.swift` | `ScalingLimits` (`.default`/`.strict`/`.relaxed`) |
 | `Core/ScreenMetrics.swift` | `ScreenMetrics` snapshot |
-| `Internal/Atomic.swift` | `Atomic`, `UnsafeAtomicDouble` — **internal**, lock-backed property wrappers |
-| `Internal/ScaleFactorCache.swift` | Captured factors for batch/fast scaling + `cgFloatValue(_:)` Numeric→CGFloat bridge |
-| `Internal/ScreenDimensionsCache.swift` | TTL cache + rotation invalidation for dimensions |
-| `Internal/SafeAreaCacheManager.swift` | TTL cache + invalidation for safe-area insets |
+| `Internal/ScaleFactorCache.swift` | Captured factors for FastScale/BatchScaler + `cgFloatValue(_:)` Numeric→CGFloat bridge |
+| `Internal/Snapshot.swift` | Immutable, atomically-published snapshot of nonisolated-readable scale/metric state |
+| `Internal/Log.swift` | Unified-logging endpoints (`os.Logger`) — internal `Log(_:_:level:)` |
 | `Metrics/ScreenDimensions.swift` | Platform dimensions snapshot (UIKit-gated reader) |
-| `Metrics/SafeAreaInsets.swift` | Platform safe-area snapshot (UIKit-gated reader) |
 | `Metrics/DeviceType.swift` | Device/platform classification |
 | `Scaling/Numeric+Scaling.swift` | `Int/Float/Double/CGFloat` `.w/.h/.sp/.r/.sw/.sh` |
 | `Scaling/CGGeometry+Scaling.swift` | `CGSize/CGPoint/CGRect` scaling (cross-platform) |

@@ -119,4 +119,19 @@ final class NumericScalingTests: XCTestCase {
         XCTAssertEqual(v.sw, su.screenWidth * 0.5, accuracy: 0.001)
         XCTAssertEqual(v.sh, su.screenHeight * 0.5, accuracy: 0.001)
     }
+
+    // MARK: - Type independence
+
+    func testScalingIsTypeIndependent() {
+        // All numeric types of the same magnitude must scale identically.
+        // Int64/UInt previously routed through the existential `any BinaryInteger`
+        // fallback; they must match the Double reference exactly.
+        let expected = Double(100).w
+        XCTAssertEqual(Int(100).w,     expected, accuracy: 0.001)
+        XCTAssertEqual(Int64(100).w,   expected, accuracy: 0.001)
+        XCTAssertEqual(UInt(100).w,    expected, accuracy: 0.001)
+        XCTAssertEqual(Int8(100).w,    expected, accuracy: 0.001)
+        XCTAssertEqual(Float(100).w,   expected, accuracy: 0.001)
+        XCTAssertEqual(CGFloat(100).w, expected, accuracy: 0.001)
+    }
 }

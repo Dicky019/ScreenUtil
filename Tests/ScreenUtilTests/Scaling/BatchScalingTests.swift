@@ -187,6 +187,15 @@ final class BatchScalingTests: XCTestCase {
         XCTAssertTrue(out.allSatisfy { $0 > 0 }, "Int64 must not silently scale to zero")
     }
 
+    func testBatchWidthsHandlesLargeUnsignedWithoutTrap() {
+        let su = ScreenUtil.shared
+        let big = UInt64(Int.max) + 1_000          // > Int.max — Int(big) would trap
+        let out = su.batchScaler.widths([big])
+        XCTAssertEqual(out.count, 1)
+        XCTAssertTrue(out[0].isFinite && out[0] > 0)
+        XCTAssertEqual(out[0], CGFloat(big) * su.scaleWidth, accuracy: CGFloat(big) * 1e-9)
+    }
+
     // MARK: - withBatchScaler
 
     func testWithBatchScalerReturnsValue() {

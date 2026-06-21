@@ -9,12 +9,14 @@
 import Foundation
 import CoreGraphics
 
-internal struct ScaleFactorCache: Sendable {
-    let widthScale: CGFloat
-    let heightScale: CGFloat
-    let textScale: CGFloat
-    let radiusScale: CGFloat
+@usableFromInline
+struct ScaleFactorCache: Sendable {
+    @usableFromInline let widthScale: CGFloat
+    @usableFromInline let heightScale: CGFloat
+    @usableFromInline let textScale: CGFloat
+    @usableFromInline let radiusScale: CGFloat
 
+    @usableFromInline
     init(from screenUtil: ScreenUtil) {
         let s = screenUtil._snapshot
         self.widthScale = s.scaleWidth
@@ -23,22 +25,22 @@ internal struct ScaleFactorCache: Sendable {
         self.radiusScale = min(s.scaleWidth, s.scaleHeight)
     }
 
-    @inline(__always)
+    @inlinable @inline(__always)
     func scaleWidth(_ value: CGFloat) -> CGFloat {
         return value * widthScale
     }
 
-    @inline(__always)
+    @inlinable @inline(__always)
     func scaleHeight(_ value: CGFloat) -> CGFloat {
         return value * heightScale
     }
 
-    @inline(__always)
+    @inlinable @inline(__always)
     func scaleText(_ value: CGFloat) -> CGFloat {
         return value * textScale
     }
 
-    @inline(__always)
+    @inlinable @inline(__always)
     func scaleRadius(_ value: CGFloat) -> CGFloat {
         return value * radiusScale
     }
@@ -60,7 +62,7 @@ internal func cgFloatValue<T: Numeric>(_ value: T) -> CGFloat {
         return CGFloat(v)
     default:
         if let v = value as? any BinaryInteger {
-            return CGFloat(Int(v))
+            return CGFloat(v)
         }
         if let v = value as? any BinaryFloatingPoint {
             return CGFloat(Double(v))
