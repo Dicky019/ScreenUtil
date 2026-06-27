@@ -82,7 +82,16 @@ One-time: submit `https://github.com/Dicky019/ScreenUtil` via the Add-a-Package
 form (or a PR to SwiftPackageIndex/PackageList). After that, SPI picks up new
 tags automatically. `.spi.yml` already tells it to build docs for `ScreenUtil`.
 
-**Verify:** the package page shows a green build matrix and the `1.0.0` version.
+> **Status (2026-06-28): submitted, not yet verified.** Submission is filed as
+> SwiftPackageIndex/PackageList issue
+> [#14194](https://github.com/SwiftPackageIndex/PackageList/issues/14194)
+> (label `Add Package`). It is **pending** — an SPI bot/maintainer still has to
+> validate the package, merge it into the list, and close the issue. Until then
+> the package page 404s; that is expected, not a failure on our side.
+
+**Verify (once the issue closes):** the package page
+`https://swiftpackageindex.com/Dicky019/ScreenUtil` shows a green build matrix
+and the `1.0.0` version. Only then set the repo homepage to that URL.
 
 ## 4. Post-release
 
