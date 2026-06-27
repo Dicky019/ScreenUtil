@@ -1,140 +1,49 @@
-# ScreenUtil Examples
+# ScreenUtil Demo Apps
 
-This directory contains comprehensive examples demonstrating how to use ScreenUtil in both UIKit and SwiftUI applications.
+Two runnable iOS 17 demo apps — one pure SwiftUI, one pure UIKit — each a single
+polished **GitHub profile page** whose every dimension flows through ScreenUtil.
+Designed on the **iPhone 12 baseline (390×844)**: on an iPhone 12 the UI renders
+1:1, and on a larger device (e.g. iPhone 17 Pro Max) the same design scales up
+proportionally. Screenshot both to show the adaptation.
 
-## Files
+## Run
 
-### UIKitExample.swift
-Complete UIKit implementation examples including:
-
-#### Basic Usage
-- **BasicUIKitViewController**: Demonstrates fundamental ScreenUtil usage
-  - Responsive layout with `.w`, `.h`, `.sp`, `.r` extensions
-  - Auto Layout with scaled constraints
-  - Screen metrics access and display
-  - Configuration setup
-
-#### Advanced Features
-- **AdvancedUIKitViewController**: Shows advanced capabilities
-  - Batch operations for scaling multiple values
-  - Fast scaling with `FastScale` struct
-  - Custom scaling limits demonstration
-  - Performance benchmarking
-  - ScrollView with multiple sections
-
-#### Custom Components
-- **ResponsiveCardView**: Custom UIView with built-in responsive design
-  - Responsive images, labels, and buttons
-  - Auto Layout with ScreenUtil scaling
-  - Shadow and corner radius scaling
-
-### SwiftUIExample.swift
-Complete SwiftUI implementation examples including:
-
-#### Basic SwiftUI Views
-- **BasicSwiftUIView**: Core SwiftUI usage patterns
-  - `.font(.system(size: 16.sp))` — scale the size with `.sp` inside native font APIs
-  - `.frame(width: 200.w, height: 50.h)` / `.padding(.horizontal, 20.w)` — scale inside native modifiers
-  - Grid layouts with responsive spacing
-  - Screen metrics display
-
-#### Advanced SwiftUI Features
-- **ViewModifiersDemo**: Scaling values inside native SwiftUI modifiers
-  - `.frame(width: 200.w, height: 100.h)`
-  - `.clipShape(RoundedRectangle(cornerRadius: 12.r, style: .continuous))`
-  - Animated scaling examples
-
-#### Custom Components
-- **ResponsiveProfileCard**: Professional profile card
-- **ResponsiveProgressBar**: Animated progress indicator
-- **ResponsiveStatsView**: Statistics grid layout
-- **PerformanceDemoView**: Real-time performance testing
-
-## Key Features Demonstrated
-
-### 1. Basic Scaling
-```swift
-// UIKit
-button.widthAnchor.constraint(equalToConstant: 100.w)
-label.font = .systemFont(ofSize: 16.sp)
-view.layer.cornerRadius = 8.r
-
-// SwiftUI
-Text("Hello").font(.system(size: 16.sp))
-Rectangle().frame(width: 100.w, height: 50.h)
+```bash
+cd Examples
+brew install xcodegen          # one-time
+xcodegen generate
+open ScreenUtilExamples.xcodeproj
 ```
 
-### 2. Configuration
-```swift
-// Set design size (e.g., iPhone 13 Pro)
-ScreenUtil.shared.configure(with: .iPhone13Pro)
+Pick a scheme and run:
 
-// Custom configuration
-let config = ScreenUtilConfiguration(
-    designSize: CGSize(width: 390, height: 844),
-    minTextAdapt: true,
-    scalingLimits: .default
-)
-ScreenUtil.shared.configure(with: config)
-```
+- **ScreenUtilSwiftUIDemo** — pure SwiftUI (`@Observable` model, `NavigationStack`, `@Environment(\.screenUtil)`).
+- **ScreenUtilUIKitDemo** — pure UIKit (`UIScene`, Auto Layout, stored-property subviews).
 
-### 3. Batch Operations
-```swift
-let values = [10, 20, 30, 40, 50]
-let scaledWidths = ScreenUtil.shared.batchScaler.widths(values)
-let scaledHeights = ScreenUtil.shared.batchScaler.heights(values)
-```
+## What it shows
 
-### 4. Fast Scaling
-```swift
-let fastScale = ScreenUtil.shared.fastScale
-let scaledSize = fastScale.size(CGSize(width: 100, height: 50))
-let scaledPoint = fastScale.point(CGPoint(x: 10, y: 20))
-```
+Each app composes the same sections, all scaled from the design baseline:
 
-### 5. Screen Metrics
-```swift
-let metrics = ScreenUtil.shared.getScreenMetrics()
-print("Screen: \(metrics.width) x \(metrics.height)")
-print("Safe Area Top: \(metrics.safeAreaInsets.top)")
-print("Device: \(ScreenUtil.shared.deviceType)")
-```
+| Section | ScreenUtil APIs exercised |
+|---------|---------------------------|
+| **Header** (banner, avatar, name, bio) | numeric `.w .h .sp .r`, `CGSize.scaled`, `UIView.cornerRadius/borderWidth/size`, `UIFont.systemFont(…, scaled:)` |
+| **Stats row** (repos/followers/following) | `BatchScaler.fontSizes`, `UIEdgeInsets.scaled` |
+| **Highlights** (horizontal strip) | `FastScale` (`width/height/text/size/point/rect`), `withFastScale`, `BatchScaler.points/.rects` |
+| **Tag chips** | `BatchScaler.widths/.radii`, `withBatchScaler` |
+| **Device & Scaling card** | `getScreenMetrics`, `screenWidth/Height`, `scaleWidth/Height/Text`, `deviceType`, `safeArea*`, `statusBarHeight`, `scale/fastScale(for:scaleType:)` (all `ScaleType` cases), `UIFont.customFont`, and a one-line "bulk self-test" covering `BatchScaler.heights/.sizes/.scale`, `BatchScaler.edgeInsets` (UIKit), `CGRect.scaled/.responsive` |
 
-### 6. Debug Tools
-```swift
-// Print current configuration
-ScreenUtilDebug.printCurrentConfiguration()
+### Real data + offline-safe
 
-// Run performance benchmark
-ScreenUtilDebug.benchmarkScalingOperations()
-```
+The profile loads from the live GitHub public API
+(`api.github.com/users/{login}`) — real avatar, repo and follower counts. On any
+failure (offline / rate-limited) it falls back to a bundled `sample-user.json`,
+so the demo (and your screenshots) never show a spinner or empty state.
 
-## Usage Instructions
+## Verify the scaling
 
-### For UIKit Projects
-1. Import ScreenUtil in your view controllers
-2. Configure ScreenUtil in your app launch or viewDidLoad
-3. Use the scaling extensions (.w, .h, .sp, .r) throughout your UI code
-4. Copy and adapt the example view controllers as needed
+Open the **Device & Scaling** card and read `scaleW · scaleH`:
 
-### For SwiftUI Projects
-1. Import ScreenUtil in your SwiftUI views
-2. Configure ScreenUtil in your app startup or view onAppear
-3. Use the font and view modifiers for responsive design
-4. Leverage property wrappers for automatic scaling
-5. Copy and adapt the example views as needed
+- iPhone 12 → `1.00 · 1.00` (renders exactly as designed)
+- iPhone 17 Pro Max → ~`1.13 · 1.13` (everything scaled up proportionally)
 
-## Performance Notes
-
-- Fast scaling operations are ~1.4x faster than standard scaling
-- Batch operations are optimized for processing multiple values
-- All operations are thread-safe and can be used from any queue
-- Memory usage is minimal with efficient caching strategies
-
-## Best Practices
-
-1. **Configure Early**: Set up ScreenUtil configuration as early as possible in your app lifecycle
-2. **Use Appropriate Scale Types**: Choose .w for widths, .h for heights, .sp for text, .r for radii
-3. **Leverage Batch Operations**: Use batch scaling when processing multiple values
-4. **Test on Multiple Devices**: Verify your responsive design on different screen sizes
-5. **Monitor Performance**: Use the built-in debugging tools to optimize performance
+> The generated `ScreenUtilExamples.xcodeproj` is not committed; regenerate it with `xcodegen generate`.
