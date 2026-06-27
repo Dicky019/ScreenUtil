@@ -1,6 +1,6 @@
 # ScreenUtil
 
-Responsive screen-adaptation library for Apple platforms. Scales UI from a fixed design size (e.g. 375×812 from Figma) to the real device. Inspired by `flutter_screenutil`. Pure Swift, zero dependencies. Builds on iOS / macOS / tvOS / watchOS.
+Responsive screen-adaptation library for Apple platforms. Scales UI from a fixed design size (e.g. 375×812 from Figma) to the real device. Inspired by `flutter_screenutil`. Pure Swift, one dependency ([apple/swift-atomics](https://github.com/apple/swift-atomics), for the lock-free scale-factor snapshot). Builds on iOS 15 / macOS 12 / tvOS 15 / watchOS 8.
 
 This file orients code-review and cleanup work: it maps the code, marks the public contract that must not break, and records the rules that keep the package clean.
 
@@ -35,6 +35,7 @@ Organizing rule: **one platform = one place.** Everything outside `UIKit/` and `
 Anything not reachable from this set is a removal/merge candidate.
 
 - `ScreenUtil.shared` + `configure(with:)` — singleton, configured once at launch.
+- `refreshMetrics()` — `@MainActor` rebuild of the snapshot (manual refresh, e.g. macOS window resize).
 - Numeric scaling: `.w .h .sp .r .sw .sh`.
 - `ScreenUtilConfiguration` (+ presets) and `ScalingLimits`.
 - `FastScale` / `withFastScale`, `BatchScaler` / `withBatchScaler`.
@@ -43,7 +44,7 @@ Anything not reachable from this set is a removal/merge candidate.
 
 ## Review Checklist (when editing)
 
-- Keep **zero dependencies** — `Package.swift` `dependencies: []` stays empty.
+- Keep **exactly one dependency** — only `apple/swift-atomics` (for the atomic `Snapshot`). Don't add others; don't remove it (it's what makes reads lock-free and `ScreenUtil` `Sendable` without `@unchecked`).
 - **One platform = one place**: UIKit code only under `UIKit/` (or `#if canImport(UIKit)` blocks); SwiftUI only under `SwiftUI/`. Never bare `import UIKit` in cross-platform files — breaks macOS.
 - Builds under `-strict-concurrency=complete` — no new concurrency warnings.
 - `ScreenUtil` is compiler-verified `Sendable` (atomic `Snapshot`; no `@unchecked`). New shared state must be `Sendable` / atomic.

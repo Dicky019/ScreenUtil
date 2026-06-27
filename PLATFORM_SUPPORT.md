@@ -2,196 +2,110 @@
 
 ## Overview
 
-ScreenUtil is designed to work across all Apple platforms without requiring UIKit as a dependency. The library automatically adapts to the available frameworks and provides fallback implementations where needed.
+ScreenUtil runs on all Apple platforms. UIKit is **not** required: where it's
+available the library reads real screen metrics and safe areas and auto-refreshes
+on scene/orientation changes; where it isn't (macOS/watchOS, command-line, SwiftUI
+previews) it falls back to platform-appropriate defaults that you can override via
+`configure(with:)`.
 
-## Platform Support
+## Supported Platforms
 
-### ✅ **iOS 13.0+**
-- **UIKit Available**: Full functionality with automatic screen detection, safe area handling, and orientation change notifications
-- **UIKit Unavailable**: Fallback to sensible defaults with manual configuration support
+| Platform | Minimum | Screen metrics source |
+|----------|---------|-----------------------|
+| iOS / iPadOS | **15.0** | Active `UIWindowScene` (UIKit) |
+| macOS | **12.0** | Platform default (no UIKit) |
+| tvOS | **15.0** | UIKit |
+| watchOS | **8.0** | Platform default |
 
-### ✅ **macOS 10.15+**
-- **AppKit/SwiftUI**: Core scaling functionality with platform-appropriate defaults
-- **Default Screen**: 1440x900 @2x (MacBook Air equivalent)
+## Dependencies
 
-### ✅ **tvOS 13.0+**
-- **UIKit Available**: Full TV-optimized functionality
-- **Default Screen**: 1920x1080 @1x with appropriate safe areas for TV bezels
-
-### ✅ **watchOS 6.0+**
-- **WatchKit**: Optimized for small screen scaling
-- **Default Screen**: 184x224 @2x (Apple Watch Series 7 41mm equivalent)
-
-## Architecture
-
-### Core Dependencies
 ```swift
-// Only these frameworks are required across all platforms:
+// Required across all platforms:
 import Foundation
 import CoreGraphics
-import QuartzCore // For CACurrentMediaTime
-```
+import Atomics      // apple/swift-atomics — the lock-free scale-factor snapshot
 
-### Optional Dependencies
-```swift
-// These are conditionally imported only when available:
+// Conditionally compiled, only where available:
 #if canImport(UIKit)
-import UIKit  // iOS, tvOS - for screen detection and safe areas
+import UIKit        // iOS, tvOS — screen detection, safe areas, change notifications
 #endif
 
 #if canImport(SwiftUI)
-import SwiftUI  // All platforms - for SwiftUI extensions
-#endif
-
-#if canImport(AppKit)
-import AppKit  // macOS - for future AppKit-specific features
+import SwiftUI      // EnvironmentValues.screenUtil
 #endif
 ```
 
-### Fallback Strategy
+There is exactly one external dependency, [apple/swift-atomics](https://github.com/apple/swift-atomics).
 
-1. **Screen Detection**
-   - **With UIKit**: Uses `UIScreen.main.bounds` and `UIDevice.current.userInterfaceIdiom`
-   - **Without UIKit**: Uses platform-appropriate defaults
+## Fallback Strategy
 
-2. **Safe Area Detection**
-   - **With UIKit**: Uses `UIApplication.shared.connectedScenes` and window safe areas
-   - **Without UIKit**: Uses platform-specific safe area defaults
+1. **Screen detection**
+   - **With UIKit**: derived from the active `UIWindowScene` (not the soft-deprecated `UIScreen.main`).
+   - **Without UIKit**: platform default (see below).
 
-3. **Orientation Changes**
-   - **With UIKit**: Automatically invalidates caches on `UIDevice.orientationDidChangeNotification`
-   - **Without UIKit**: Manual cache invalidation via `refreshMetrics()`
+2. **Safe-area detection**
+   - **With UIKit**: native safe-area insets captured from the window at rebuild time.
+   - **Without UIKit / before a window exists**: all insets are `0`.
+
+3. **Change handling**
+   - **With UIKit**: the snapshot rebuilds automatically on `UIScene.didActivate` and `UIDevice.orientationDidChange`.
+   - **Without UIKit**: call `ScreenUtil.shared.refreshMetrics()` manually (e.g. after a macOS window resize).
 
 ## Platform Defaults
 
-### iOS (without UIKit)
+Used before configuration, and on platforms without UIKit. Safe-area insets and
+status-bar height default to `0` until a real window provides them.
+
 ```swift
-// Screen: iPhone 13 Pro equivalent
-ScreenDimensions(width: 375, height: 812, scale: 3.0)
-SafeAreaInsets(top: 44, bottom: 34, left: 0, right: 0, statusBarHeight: 44)
+// iOS      — ScreenDimensions(width: 375,  height: 812,  scale: 3.0)
+// macOS    — ScreenDimensions(width: 1440, height: 900,  scale: 2.0)
+// tvOS     — ScreenDimensions(width: 1920, height: 1080, scale: 1.0)
+// watchOS  — ScreenDimensions(width: 184,  height: 224,  scale: 2.0)
 ```
 
-### macOS
+## Usage
+
+### Core scaling — all platforms, no UIKit needed
+
 ```swift
-// Screen: MacBook Air equivalent
-ScreenDimensions(width: 1440, height: 900, scale: 2.0)
-SafeAreaInsets(top: 0, bottom: 0, left: 0, right: 0, statusBarHeight: 24)
+let width  = 100.w   // width  scaling
+let height = 50.h    // height scaling
+let font   = 16.sp   // text   scaling (no distortion)
+let radius = 12.r    // radius scaling
+
+let halfWidth    = 50.sw   // 50% of screen width
+let tenthHeight  = 10.sh   // 10% of screen height
 ```
 
-### tvOS (without UIKit)
+`.w/.h/.sp/.r/.sw/.sh` are available on `Int`, `Float`, `Double`, and `CGFloat`,
+and `CGSize/CGPoint/CGRect` have their own scaling helpers — all cross-platform.
+
+### UIKit-only helpers
+
+Wrap UIKit-specific code in `#if canImport(UIKit)` for cross-platform sources:
+
 ```swift
-// Screen: Apple TV 4K
-ScreenDimensions(width: 1920, height: 1080, scale: 1.0)
-SafeAreaInsets(top: 60, bottom: 60, left: 90, right: 90, statusBarHeight: 0)
-```
-
-### watchOS
-```swift
-// Screen: Apple Watch Series 7 41mm
-ScreenDimensions(width: 184, height: 224, scale: 2.0)
-SafeAreaInsets(top: 0, bottom: 0, left: 0, right: 0, statusBarHeight: 0)
-```
-
-## Usage Examples
-
-### Core Scaling (All Platforms)
-```swift
-// These work on all platforms without any dependencies
-let scaledWidth = 100.w
-let scaledHeight = 50.h
-let scaledFont = 16.sp
-let scaledRadius = 12.r
-
-// Screen percentages
-let halfScreen = 50.sw
-let quarterScreen = 25.sh
-```
-
-### Platform-Independent Types
-```swift
-// ResponsiveInsets works on all platforms
-let insets = ResponsiveInsets.responsive(
-    top: 16, leading: 20, bottom: 16, trailing: 20
-)
-
-// Convert to platform-specific types when available
 #if canImport(UIKit)
-let uiInsets = insets.uiEdgeInsets
-#endif
-
-#if canImport(SwiftUI)
-let swiftUIInsets = insets.edgeInsets
+let font   = UIFont.systemFont(ofSize: 16, weight: .medium, scaled: true)
+let insets = UIEdgeInsets.scaled(horizontal: 20, vertical: 10)
+view.cornerRadius(12)
 #endif
 ```
 
-### Font Scaling
+### Manual configuration for non-UIKit environments
+
 ```swift
-// Platform-independent font descriptor
-let fontDesc = ResponsiveFontDescriptor(size: 16, weight: .medium)
-
-#if canImport(UIKit)
-let uiFont = fontDesc.uiFont
-#endif
-
-#if canImport(SwiftUI)
-let swiftUIFont = fontDesc.swiftUIFont
-#endif
-```
-
-### Manual Configuration for Non-UIKit Environments
-```swift
-// Explicitly set screen dimensions if UIKit detection isn't available
-let config = ScreenUtilConfiguration(
-    designSize: CGSize(width: 375, height: 812)
-)
+// Set your design canvas explicitly (or use a preset like .iPhone12).
+let config = ScreenUtilConfiguration(designSize: CGSize(width: 375, height: 812))
 ScreenUtil.shared.configure(with: config)
 
-// Manually refresh metrics when screen changes (e.g., window resize on macOS)
+// Refresh after a screen change UIKit can't observe for you (e.g. macOS resize).
 ScreenUtil.shared.refreshMetrics()
 ```
 
 ## Best Practices
 
-1. **Always use the core scaling APIs** (`.w`, `.h`, `.sp`, `.r`) - they work everywhere
-2. **Use platform-independent types** (`ResponsiveInsets`, `ResponsiveFontDescriptor`) for cross-platform code
-3. **Wrap platform-specific code** in `#if canImport()` blocks
-4. **Test on all target platforms** to ensure fallbacks work correctly
-5. **Consider manual configuration** for specialized environments
-
-## Migration from UIKit-dependent Code
-
-### Before (UIKit Required)
-```swift
-let insets = UIEdgeInsets(top: 16.h, left: 20.w, bottom: 16.h, right: 20.w)
-let font = UIFont.systemFont(ofSize: 16.sp, weight: .medium)
-```
-
-### After (Platform Independent)
-```swift
-let insets = ResponsiveInsets.responsive(top: 16, leading: 20, bottom: 16, trailing: 20)
-let fontDesc = ResponsiveFontDescriptor(size: 16, weight: .medium)
-
-// Convert to platform types when needed
-#if canImport(UIKit)
-let uiInsets = insets.uiEdgeInsets
-let uiFont = fontDesc.uiFont
-#endif
-```
-
-## Performance Impact
-
-The optional UIKit approach has minimal performance impact:
-
-- **Compile-time**: Conditional compilation eliminates unused code
-- **Runtime**: No performance difference when UIKit is available
-- **Fallback mode**: Slightly faster due to no framework overhead
-- **Memory**: Reduced memory usage when UIKit isn't needed
-
-This architecture ensures ScreenUtil can be used in:
-- iOS apps (with or without UIKit)
-- macOS apps (AppKit, SwiftUI, or Catalyst)
-- tvOS apps
-- watchOS apps
-- Command-line tools
-- Server-side Swift
-- Cross-platform frameworks
+1. **Use the core scaling APIs** (`.w`, `.h`, `.sp`, `.r`) — they work everywhere.
+2. **Wrap platform-specific code** in `#if canImport(UIKit)` / `#if canImport(SwiftUI)`.
+3. **Configure once at launch** on the main actor; reads afterwards are lock-free.
+4. **Test on all target platforms** (`swift build` + `swift test` on macOS catch the platform-isolation regressions).
