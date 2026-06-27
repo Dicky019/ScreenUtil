@@ -5,9 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-
-> Pre-1.0; the public API is still changing.
+## [1.0.0] - 2026-06-28
 
 ### Changed
 - **Swift 6 language mode** (`swift-tools-version: 6.0`, `swiftLanguageModes: [.v6]`).
@@ -41,6 +39,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - One dependency: [apple/swift-atomics](https://github.com/apple/swift-atomics), used for the lock-free scale-factor snapshot.
 
 ### Notes
-- Pre-1.0: no version has been tagged yet, and the public API is still changing.
-  The current state is the platform-isolated Swift 6 engine described above; the
-  next tagged release will become `1.0.0`.
+- First tagged release. The platform-isolated Swift 6 engine described above is
+  the `1.0.0` public surface.
