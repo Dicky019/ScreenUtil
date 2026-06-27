@@ -3,10 +3,10 @@
 </h1>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Swift-5.7+-orange.svg" alt="Swift Version">
-  <img src="https://img.shields.io/badge/Platforms-iOS%20|%20macOS%20|%20tvOS%20|%20watchOS-blue.svg" alt="Platforms">
+  <img src="https://img.shields.io/badge/Swift-6.0-orange.svg" alt="Swift Version">
+  <img src="https://img.shields.io/badge/Platforms-iOS%2015%20|%20macOS%2012%20|%20tvOS%2015%20|%20watchOS%208-blue.svg" alt="Platforms">
   <img src="https://img.shields.io/badge/SPM-compatible-brightgreen.svg" alt="SPM Compatible">
-  <img src="https://img.shields.io/badge/License-MIT-lightgrey.svg" alt="License">
+  <img src="https://img.shields.io/badge/License-Apache%202.0-lightgrey.svg" alt="License">
 </p>
 
 <p align="center">
@@ -26,6 +26,24 @@
 - 🖥️ **Multi-platform** — iOS, macOS, tvOS, watchOS
 
 > **Dependencies:** one — [apple/swift-atomics](https://github.com/apple/swift-atomics), used for the lock-free scale-factor snapshot.
+>
+> **Privacy:** ships a privacy manifest (`PrivacyInfo.xcprivacy`) declaring no data collection and no tracking.
+
+## 📲 Showcase
+
+Two runnable demo apps live in [`Examples/`](Examples) — one pure SwiftUI, one pure UIKit — each a GitHub profile page built on the **iPhone 12 baseline (390×844)** with an MVVM `LoadState` architecture. The same design scales proportionally across devices, staying visually identical:
+
+| UIKit · iPhone 12 (baseline 1:1) | SwiftUI · iPhone 17 Pro Max (scaled up) |
+| :---: | :---: |
+| <img src="Examples/image/UIKit%20-%20iPhone%2012.png" alt="UIKit demo on iPhone 12" width="280"> | <img src="Examples/image/SwiftUI%20-%20iPhone%2017%20Pro%20Max.png" alt="SwiftUI demo on iPhone 17 Pro Max" width="280"> |
+
+Generate the Xcode project with [XcodeGen](https://github.com/yonaskolb/XcodeGen):
+
+```bash
+cd Examples
+xcodegen generate
+open ScreenUtilExamples.xcodeproj   # schemes: "SwiftUI Demo", "UIKit Demo"
+```
 
 ## 📦 Installation
 
@@ -286,7 +304,7 @@ See the [Contributing Guide](CONTRIBUTING.md). Fork → branch → PR.
 
 ## 📄 License
 
-ScreenUtil is available under the MIT license. See [LICENSE](LICENSE).
+ScreenUtil is available under the Apache 2.0 license. See [LICENSE](LICENSE).
 
 ## 🙏 Acknowledgments
 

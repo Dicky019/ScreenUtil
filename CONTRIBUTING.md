@@ -58,9 +58,9 @@ We welcome pull requests! Please follow these guidelines:
 
 ### Prerequisites
 
-- Xcode 15.0+
-- iOS 12.0+ / tvOS 12.0+ simulator or device
-- Swift 6.1+
+- Xcode 16.0+
+- Swift 6.0 toolchain (the package builds in Swift 6 language mode)
+- A simulator or device on iOS 15.0+ / macOS 12.0+ / tvOS 15.0+ / watchOS 8.0+
 
 ### Getting Started
 
@@ -82,31 +82,37 @@ We welcome pull requests! Please follow these guidelines:
 
 ### Project Structure
 
+Platform-isolated layout — anything outside `UIKit/` and `SwiftUI/` is pure
+cross-platform (Foundation + CoreGraphics only), which keeps the macOS build safe.
+
 ```
 ScreenUtil/
-├── Package.swift              # Package configuration
-├── Sources/
-│   └── ScreenUtil/
-│       ├── ScreenUtil.swift   # Main ScreenUtil class
-│       ├── Extensions/        # CGFloat extensions
-│       └── SwiftUI/           # SwiftUI support
-└── Tests/
-    └── ScreenUtilTests/       # Unit tests
+├── Package.swift                 # Package configuration (one dependency: swift-atomics)
+├── Sources/ScreenUtil/
+│   ├── Core/                     # ScreenUtil engine, configuration, ScaleType, limits, metrics
+│   ├── Internal/                 # Atomic Snapshot, scale-factor cache, logging
+│   ├── Metrics/                  # ScreenDimensions, DeviceType
+│   ├── Scaling/                  # Numeric/CGGeometry extensions, FastScale, BatchScaler
+│   ├── UIKit/                    # UIFont / UIView / UIEdgeInsets helpers (#if canImport(UIKit))
+│   ├── SwiftUI/                  # EnvironmentValues.screenUtil
+│   └── Debug/                    # ScreenUtilDebug
+├── Tests/ScreenUtilTests/        # Unit tests (Core / Scaling / SwiftUI / Debug / Performance)
+└── Examples/                     # Runnable SwiftUI + UIKit demo apps (XcodeGen)
 ```
 
 ## Coding Standards
 
 ### Swift Style Guide
 
-We follow the [Swift API Design Guidelines](https://www.swift.org/documentation/api-design-guidelines/) and use SwiftLint for consistency.
+We follow the [Swift API Design Guidelines](https://www.swift.org/documentation/api-design-guidelines/).
 
 ### Code Formatting
 
 - Use **4 spaces** for indentation (no tabs)
 - Maximum line length: **120 characters**
 - Use **camelCase** for variables and functions
-- Use **PascalCase** for types and protocols
-- Use **snake_case** for file names
+- Use **PascalCase** for types, protocols, **and file names** (e.g. `ScreenUtil.swift`, `ScaleType.swift`)
+- Each file starts with an Xcode-style header comment ending `Created by Dicky Darmawan on DD/MM/YY`
 
 ### Documentation
 
@@ -192,9 +198,9 @@ final class ScreenUtilTests: XCTestCase {
 
 ### Before Submitting
 
-1. **Ensure tests pass** locally
+1. **Ensure tests pass** locally (`swift test`, and `swift test --sanitize=thread` for concurrency changes)
 2. **Update documentation** if needed
-3. **Check code formatting** with SwiftLint
+3. **Check code formatting** against the style guide above
 4. **Self-review** your changes
 
 ### Pull Request Template
