@@ -26,7 +26,7 @@ final class SwiftUIFontEnvironmentTests: XCTestCase {
     // MARK: - EnvironmentValues.screenUtil
 
     func testEnvironmentValuesDefaultIsShared() {
-        var env = EnvironmentValues()
+        let env = EnvironmentValues()
         // Default should be ScreenUtil.shared
         let fromEnv = env.screenUtil
         XCTAssertTrue(fromEnv === ScreenUtil.shared)
