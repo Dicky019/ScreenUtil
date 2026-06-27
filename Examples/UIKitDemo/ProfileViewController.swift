@@ -20,21 +20,15 @@ final class ProfileViewController: UIViewController {
     private let spinner: UIActivityIndicatorView = {
         let spinner = UIActivityIndicatorView(style: .large)
         spinner.hidesWhenStopped = false
-        spinner.translatesAutoresizingMaskIntoConstraints = false
         spinner.isAccessibilityElement = true
         spinner.accessibilityLabel = "Loading profile"
         return spinner
     }()
 
-    private lazy var errorView: ErrorStateView = {
-        let view = ErrorStateView { [weak self] in self?.startLoad() }
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
+    private lazy var errorView = ErrorStateView { [weak self] in self?.startLoad() }
 
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.alwaysBounceVertical = true
         return scrollView
     }()
@@ -43,19 +37,22 @@ final class ProfileViewController: UIViewController {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.alignment = .fill
-        stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         view.backgroundColor = .systemBackground
+        title = "UIKit Demo"
+        navigationItem.largeTitleDisplayMode = .never
         contentStack.isLayoutMarginsRelativeArrangement = true
 
-        view.addSubview(scrollView)
-        scrollView.addSubview(contentStack)
-        view.addSubview(spinner)
-        view.addSubview(errorView)
+        view.addAutoLayout(scrollView)
+        scrollView.addAutoLayout(contentStack)
+        view.addAutoLayout(spinner)
+        view.addAutoLayout(errorView)
+
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -114,7 +111,7 @@ final class ProfileViewController: UIViewController {
             spinner.isHidden = true
             errorView.isHidden = false
             scrollView.isHidden = true
-            errorView.configure(message: Self.message(for: error))
+            errorView.configure(message: error.userMessage)
         case .loaded(let profile):
             spinner.stopAnimating()
             spinner.isHidden = true
@@ -131,10 +128,5 @@ final class ProfileViewController: UIViewController {
         contentStack.addArrangedSubview(HighlightsStripView())
         contentStack.addArrangedSubview(TagChipsView(tags: ExampleProfile.tags))
         contentStack.addArrangedSubview(DeviceCardView())
-    }
-
-    private static func message(for error: Error) -> String {
-        (error as? URLError)?.localizedDescription
-            ?? "Please check your connection and try again."
     }
 }

@@ -16,6 +16,7 @@ struct TagChips: View {
         // Bulk example: scale a uniform corner radius + min width for every chip.
         let radii = ScreenUtil.shared.batchScaler.radii(Array(repeating: 12, count: tags.count))
         let widths = withBatchScaler { $0.widths(Array(repeating: 64, count: tags.count)) }
+        
         HStack {
             ForEach(Array(tags.enumerated()), id: \.offset) { index, tag in
                 Text(tag)
@@ -23,7 +24,7 @@ struct TagChips: View {
                     .padding(.horizontal, 12.w)
                     .padding(.vertical, 6.h)
                     .frame(minWidth: widths[index])
-                    .background(.tint.opacity(0.15), in: .rect(cornerRadius: radii[index]))
+                    .background(.chip, in: .rect(cornerRadius: radii[index]))
             }
         }
     }

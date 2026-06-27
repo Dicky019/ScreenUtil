@@ -23,12 +23,15 @@ struct LiveProfileRepository: ProfileRepository {
         guard let url = URL(string: "https://api.github.com/users/\(username)") else {
             throw URLError(.badURL)
         }
+
         var request = URLRequest(url: url)
         request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
+
         let (data, response) = try await session.data(for: request)
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
             throw URLError(.badServerResponse)
         }
+        
         return try JSONDecoder().decode(GitHubUser.self, from: data).toDomain()
     }
 }

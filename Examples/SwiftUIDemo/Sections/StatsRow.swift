@@ -23,23 +23,20 @@ struct StatsRow: View {
     var body: some View {
         // Bulk-scale the two font sizes once, then reuse per column.
         let sizes = ScreenUtil.shared.batchScaler.fontSizes([22, 13])
+        
         HStack {
             ForEach(stats) { stat in
                 VStack(spacing: 2.h) {
-                    Text(Self.compact(stat.value))
+                    Text(stat.value.compactText)
                         .font(.system(size: sizes[0], weight: .bold))
                     Text(stat.label)
                         .font(.system(size: sizes[1]))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.secondaryText)
                 }
                 .frame(maxWidth: .infinity)
             }
         }
         .padding(.vertical, 14.h)
-        .background(.quaternary, in: .rect(cornerRadius: 16.r))
-    }
-
-    private static func compact(_ n: Int) -> String {
-        n >= 1000 ? String(format: "%.1fk", Double(n) / 1000) : "\(n)"
+        .background(.card, in: .rect(cornerRadius: 16.r))
     }
 }

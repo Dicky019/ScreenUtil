@@ -16,4 +16,7 @@ enum ExampleProfile {
 
     /// Tag chips shown on the profile.
     static let tags = ["swift", "ios", "uikit", "swiftui"]
+
+    /// Captions for the horizontal highlights carousel.
+    static let highlights = ["Swift", "iOS", "UIKit", "SwiftUI", "Perf", "Open"]
 }

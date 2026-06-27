@@ -18,18 +18,18 @@ struct ProfileHeader: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12.h) {
             ZStack(alignment: .bottomLeading) {
-                LinearGradient(colors: [.blue, .purple], startPoint: .topLeading, endPoint: .bottomTrailing)
+                LinearGradient(colors: Color.bannerColors, startPoint: .topLeading, endPoint: .bottomTrailing)
                     .frame(height: 140.h)
                     .clipShape(.rect(cornerRadius: 20.r))
 
                 AsyncImage(url: profile.avatar) { image in
                     image.resizable().scaledToFill()
                 } placeholder: {
-                    Color.gray.opacity(0.3)
+                    Color.avatarFill
                 }
                 .frame(width: avatarSize.width, height: avatarSize.height)
                 .clipShape(.circle)
-                .overlay(Circle().strokeBorder(.background, lineWidth: 4.w))
+                .overlay(Circle().strokeBorder(.avatarStroke, lineWidth: 4.w))
                 .offset(x: 20.w, y: avatarSize.height / 2)
             }
             .padding(.bottom, avatarSize.height / 2)
@@ -39,7 +39,7 @@ struct ProfileHeader: View {
                     .font(.system(size: 24.sp, weight: .bold))
                 Text("@\(profile.username)")
                     .font(.system(size: 15.sp))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.secondaryText)
                 if let bio = profile.bio {
                     Text(bio)
                         .font(.system(size: 15.sp))

@@ -10,20 +10,21 @@ import ScreenUtil
 import SwiftUI
 
 struct Highlights: View {
-    private let titles = ["Swift", "iOS", "UIKit", "SwiftUI", "Perf", "Open"]
+    private let titles = ExampleProfile.highlights
 
     var body: some View {
         // Capture scale factors once for the repeated circles (hot path).
         let fast = ScreenUtil.shared.fastScale
         let diameter = fast.width(64)
+        
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: fast.width(14)) {
                 ForEach(titles, id: \.self) { title in
                     VStack(spacing: fast.height(6)) {
                         Circle()
-                            .fill(Color.accentColor.gradient)
+                            .fill(LinearGradient(colors: Color.accentColors, startPoint: .top, endPoint: .bottom))
                             .frame(width: diameter, height: diameter)
-                            .overlay(Text(title.prefix(1)).font(.system(size: fast.text(24), weight: .bold)).foregroundStyle(.white))
+                            .overlay(Text(title.prefix(1)).font(.system(size: fast.text(24), weight: .bold)).foregroundStyle(.onAccent))
                         Text(title).font(.system(size: fast.text(12)))
                     }
                 }

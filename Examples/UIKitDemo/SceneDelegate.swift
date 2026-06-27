@@ -19,10 +19,9 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = scene as? UIWindowScene else { return }
 
         let window = UIWindow(windowScene: windowScene)
-        // No navigation controller: the profile header already shows the identity, so
-        // the demo matches the SwiftUI version (no title bar). The scroll view insets
-        // its content below the status bar automatically via the safe area.
-        window.rootViewController = ProfileViewController()
+        // Navigation controller gives the inline "UIKit Demo" title, mirroring the
+        // SwiftUI demo's NavigationStack("SwiftUI Demo").
+        window.rootViewController = UINavigationController(rootViewController: ProfileViewController())
         self.window = window
         window.makeKeyAndVisible()
     }
