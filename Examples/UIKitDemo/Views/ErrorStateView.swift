@@ -12,14 +12,7 @@ import UIKit
 final class ErrorStateView: UIView {
     private let onRetry: () -> Void
 
-    private let messageLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 15, weight: .regular, scaled: true)
-        label.textColor = .secondaryLabel
-        label.textAlignment = .center
-        label.numberOfLines = 0
-        return label
-    }()
+    private let messageLabel = UILabel.scaled(size: 15, color: .secondaryText, align: .center, lines: 0)
 
     private lazy var retryButton: UIButton = {
         var config = UIButton.Configuration.borderedProminent()
@@ -33,12 +26,13 @@ final class ErrorStateView: UIView {
     init(onRetry: @escaping () -> Void) {
         self.onRetry = onRetry
         super.init(frame: .zero)
+        
         let stack = UIStackView(arrangedSubviews: [messageLabel, retryButton])
         stack.axis = .vertical
         stack.alignment = .center
         stack.spacing = 12.h
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(stack)
+        addAutoLayout(stack)
+
         NSLayoutConstraint.activate([
             stack.centerXAnchor.constraint(equalTo: centerXAnchor),
             stack.centerYAnchor.constraint(equalTo: centerYAnchor),

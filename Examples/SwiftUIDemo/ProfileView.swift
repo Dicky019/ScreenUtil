@@ -20,26 +20,30 @@ struct ProfileView: View {
     }
 
     var body: some View {
-        Group {
-            switch model.state {
-            case .idle, .loading:
-                ProgressView()
-                    .controlSize(.large)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .accessibilityLabel("Loading profile")
-            case .failed(let error):
-                ContentUnavailableView {
-                    Label("Couldn't Load Profile", systemImage: "wifi.slash")
-                } description: {
-                    Text(Self.message(for: error))
-                } actions: {
-                    Button("Retry") { Task { await model.retry() } }
+        NavigationStack {
+            Group {
+                switch model.state {
+                case .idle, .loading:
+                    ProgressView()
+                        .controlSize(.large)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .accessibilityLabel("Loading profile")
+                case .failed(let error):
+                    ContentUnavailableView {
+                        Label("Couldn't Load Profile", systemImage: "wifi.slash")
+                    } description: {
+                        Text(error.userMessage)
+                    } actions: {
+                        Button("Retry") { Task { await model.retry() } }
+                    }
+                case .loaded(let profile):
+                    loadedContent(profile)
                 }
-            case .loaded(let profile):
-                loadedContent(profile)
             }
+            .navigationTitle("SwiftUI Demo")
+            .navigationBarTitleDisplayMode(.inline)
+            .task { await model.load() }
         }
-        .task { await model.load() }
     }
 
     private func loadedContent(_ profile: Profile) -> some View {
@@ -55,11 +59,6 @@ struct ProfileView: View {
             .padding(.horizontal, 20.w)
             .padding(.top, 12.h)
         }
-    }
-
-    private static func message(for error: Error) -> String {
-        (error as? URLError)?.localizedDescription
-            ?? "Please check your connection and try again."
     }
 }
 

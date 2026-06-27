@@ -22,6 +22,7 @@ final class GradientView: UIView {
          start: CGPoint = CGPoint(x: 0, y: 0),
          end: CGPoint = CGPoint(x: 1, y: 1)) {
         super.init(frame: .zero)
+        
         gradient.colors = colors.map(\.cgColor)
         gradient.startPoint = start
         gradient.endPoint = end

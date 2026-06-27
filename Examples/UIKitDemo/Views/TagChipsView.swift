@@ -12,13 +12,15 @@ import UIKit
 final class TagChipsView: UIView {
     init(tags: [String]) {
         super.init(frame: .zero)
+        
         let widths = withBatchScaler { $0.widths(Array(repeating: 64, count: tags.count)) }
         let radii = ScreenUtil.shared.batchScaler.radii(Array(repeating: 12, count: tags.count))
         let chips = tags.enumerated().map { index, tag in chip(tag, minWidth: widths[index], radius: radii[index]) }
+        
         let row = UIStackView(arrangedSubviews: chips)
         row.spacing = 8.w
-        row.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(row)
+        addAutoLayout(row)
+
         NSLayoutConstraint.activate([
             row.topAnchor.constraint(equalTo: topAnchor),
             row.bottomAnchor.constraint(equalTo: bottomAnchor),
@@ -34,7 +36,7 @@ final class TagChipsView: UIView {
         label.text = text
         label.font = .systemFont(ofSize: 13, weight: .medium, scaled: true)
         label.textAlignment = .center
-        label.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.15)  // matches SwiftUI .tint.opacity(0.15)
+        label.backgroundColor = .chip
         label.layer.cornerRadius = radius
         label.clipsToBounds = true
         label.textInsets = .scaled(horizontal: 12, vertical: 6)

@@ -12,20 +12,21 @@ import UIKit
 final class StatsRowView: UIView {
     init(profile: Profile) {
         super.init(frame: .zero)
-        backgroundColor = .secondarySystemBackground
+        backgroundColor = .card
         layer.cornerRadius = 16.r
         layoutMargins = .scaled(all: 14)          // UIEdgeInsets.scaled
 
         let sizes = ScreenUtil.shared.batchScaler.fontSizes([22, 13])  // [value, label]
         let columns = [
-            column(value: Self.compact(profile.repos), label: "Repos", sizes: sizes),
-            column(value: Self.compact(profile.followers), label: "Followers", sizes: sizes),
-            column(value: Self.compact(profile.following), label: "Following", sizes: sizes),
+            column(value: profile.repos.compactText, label: "Repos", sizes: sizes),
+            column(value: profile.followers.compactText, label: "Followers", sizes: sizes),
+            column(value: profile.following.compactText, label: "Following", sizes: sizes),
         ]
+        
         let row = UIStackView(arrangedSubviews: columns)
         row.distribution = .fillEqually
-        row.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(row)
+        addAutoLayout(row)
+
         NSLayoutConstraint.activate([
             row.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
             row.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor),
@@ -37,20 +38,19 @@ final class StatsRowView: UIView {
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
     private func column(value: String, label: String, sizes: [CGFloat]) -> UIStackView {
+        // sizes are already scaled by batchScaler.fontSizes, so use preScaled fonts.
         let valueLabel = UILabel(); valueLabel.text = value
-        valueLabel.font = .systemFont(ofSize: sizes[0], weight: .bold).scaled(false) // already scaled
+        valueLabel.font = .preScaled(sizes[0], weight: .bold)
         valueLabel.textAlignment = .center
+
         let nameLabel = UILabel(); nameLabel.text = label
-        nameLabel.font = .systemFont(ofSize: sizes[1], weight: .regular).scaled(false)
-        nameLabel.textColor = .secondaryLabel
+        nameLabel.font = .preScaled(sizes[1])
+        nameLabel.textColor = .secondaryText
         nameLabel.textAlignment = .center
+
         let stack = UIStackView(arrangedSubviews: [valueLabel, nameLabel])
         stack.axis = .vertical
         stack.spacing = 2.h
         return stack
-    }
-
-    private static func compact(_ n: Int) -> String {
-        n >= 1000 ? String(format: "%.1fk", Double(n) / 1000) : "\(n)"
     }
 }
