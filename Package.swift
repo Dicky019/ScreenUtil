@@ -16,7 +16,7 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-atomics.git", from: "1.2.0")
+        .package(url: "https://github.com/apple/swift-atomics.git", exact: "1.3.0")
     ],
     targets: [
         .target(
@@ -25,7 +25,6 @@ let package = Package(
                 .product(name: "Atomics", package: "swift-atomics")
             ],
             path: "Sources/ScreenUtil",
-            exclude: ["Info.plist"],
             resources: [
                 .copy("PrivacyInfo.xcprivacy")
             ],
