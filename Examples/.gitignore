@@ -1,0 +1,5 @@
+# Ignore build artifacts and Xcode project files
+build/*
+
+# XcodeGen-generated demo project (regenerate with `xcodegen generate`)
+ScreenUtilExamples.xcodeproj/*

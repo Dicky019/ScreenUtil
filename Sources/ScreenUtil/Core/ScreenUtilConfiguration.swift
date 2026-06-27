@@ -29,6 +29,11 @@ public struct ScreenUtilConfiguration: ScreenUtilConfigurable, Sendable, Equatab
         self.scalingLimits = scalingLimits
     }
 
+    /// Preset for designs targeting the iPhone 12 / 12 Pro / 13 / 14 (390×844 pt).
+    public static let iPhone12 = ScreenUtilConfiguration(
+        designSize: CGSize(width: 390, height: 844)
+    )
+
     /// Preset for designs targeting the iPhone 13 Pro (390×844 pt).
     public static let iPhone13Pro = ScreenUtilConfiguration(
         designSize: CGSize(width: 390, height: 844)

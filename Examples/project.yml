@@ -1,0 +1,57 @@
+name: ScreenUtilExamples
+options:
+  bundleIdPrefix: com.dickydarmawan.screenutil
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+packages:
+  ScreenUtil:
+    path: ..
+targets:
+  "SwiftUI Demo":
+    type: application
+    platform: iOS
+    sources:
+      - SwiftUIDemo
+      - Shared
+    dependencies:
+      - package: ScreenUtil
+    scheme:
+      testTargets:
+        - ScreenUtilExamplesTests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.dickydarmawan.screenutil.swiftuidemo
+        GENERATE_INFOPLIST_FILE: YES
+        TARGETED_DEVICE_FAMILY: "1,2"
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        SWIFT_VERSION: "6.0"
+  ScreenUtilExamplesTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - Tests
+      - Shared
+    dependencies:
+      - package: ScreenUtil
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_VERSION: "6.0"
+  "UIKit Demo":
+    type: application
+    platform: iOS
+    sources:
+      - UIKitDemo
+      - Shared
+    dependencies:
+      - package: ScreenUtil
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.dickydarmawan.screenutil.uikitdemo
+        GENERATE_INFOPLIST_FILE: YES
+        TARGETED_DEVICE_FAMILY: "1,2"
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        SWIFT_VERSION: "6.0"
