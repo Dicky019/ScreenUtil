@@ -82,14 +82,7 @@ One-time: submit `https://github.com/Dicky019/ScreenUtil` via the Add-a-Package
 form (or a PR to SwiftPackageIndex/PackageList). After that, SPI picks up new
 tags automatically. `.spi.yml` already tells it to build docs for `ScreenUtil`.
 
-> **Status (2026-06-28): approval queued, not yet live.** Submission is filed as
-> SwiftPackageIndex/PackageList issue
-> [#14194](https://github.com/SwiftPackageIndex/PackageList/issues/14194)
-> (label `Add Package`). The SPI bot has acknowledged it and opened auto-approval
-> PR [#14195](https://github.com/SwiftPackageIndex/PackageList/pull/14195)
-> ("We will approve and add these packages with #14195"). Once #14195 merges, SPI
-> indexes the repo and runs its build; until then the package page 404s — that is
-> expected, not a failure on our side.
+> **Listed at SPI:** live at <https://swiftpackageindex.com/Dicky019/ScreenUtil>
 
 **Verify (once the issue closes):** the package page
 `https://swiftpackageindex.com/Dicky019/ScreenUtil` shows a green build matrix
