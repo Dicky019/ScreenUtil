@@ -82,7 +82,11 @@ One-time: submit `https://github.com/Dicky019/ScreenUtil` via the Add-a-Package
 form (or a PR to SwiftPackageIndex/PackageList). After that, SPI picks up new
 tags automatically. `.spi.yml` already tells it to build docs for `ScreenUtil`.
 
-**Verify:** the package page shows a green build matrix and the `1.0.0` version.
+> **Listed at SPI:** live at <https://swiftpackageindex.com/Dicky019/ScreenUtil>
+
+**Verify (once the issue closes):** the package page
+`https://swiftpackageindex.com/Dicky019/ScreenUtil` shows a green build matrix
+and the `1.0.0` version. Only then set the repo homepage to that URL.
 
 ## 4. Post-release
 
